@@ -2,9 +2,10 @@ package firebase
 
 import (
 	"context"
+	"log"
+
 	"go-firebase-auth-server/domain/entity"
 	"go-firebase-auth-server/domain/service"
-	"log"
 
 	_firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
@@ -41,7 +42,7 @@ func (s AuthenticationService) VerifyToken(ctx context.Context, idToken string) 
 	return token.UID, nil
 }
 
-func (s AuthenticationService) SetCustomClaims(ctx context.Context, uid string, claims map[string]interface{}) error {
+func (s AuthenticationService) SetClaims(ctx context.Context, uid string, claims map[string]interface{}) error {
 	err := s.client.SetCustomUserClaims(ctx, uid, claims)
 	if err != nil {
 		return err

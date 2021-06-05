@@ -3,7 +3,6 @@ package persistence
 import (
 	"go-firebase-auth-server/domain/entity"
 	"go-firebase-auth-server/domain/repository"
-	"log"
 
 	"gorm.io/gorm"
 )
@@ -30,6 +29,10 @@ func (r *AccountRepository) GetAccountByID(id uint) (*entity.Account, error) {
 	return &account, err
 }
 
+func (r *AccountRepository) GetAccountByUID(uid string) (*entity.Account, error) {
+	panic("implement me")
+}
+
 func (r *AccountRepository) CreateAccount(account *entity.Account) error {
 	return r.db.Create(account).Error
 }
@@ -40,9 +43,4 @@ func (r *AccountRepository) UpdateAccount(account *entity.Account) error {
 
 func (r *AccountRepository) DeleteAccount(accountID uint) error {
 	return r.db.Delete(&entity.Account{}, accountID).Error
-}
-
-func (r *AccountRepository) RegisterFirebaseUser(user *entity.FirebaseUser) (*entity.Account, error) {
-	log.Println(user)
-	return &entity.Account{}, nil
 }

@@ -2,16 +2,18 @@ package usecase
 
 import (
 	"context"
+	"log"
+
 	"go-firebase-auth-server/domain/entity"
 	"go-firebase-auth-server/domain/repository"
 	"go-firebase-auth-server/domain/service"
 	"go-firebase-auth-server/infrastructure/jwt"
 	"go-firebase-auth-server/util"
-	"log"
 )
 
 type AccountUsecase interface {
 	SignUpWithFirebase(ctx context.Context, idToken string) (*entity.Account, error)
+	LoginWithFirebase(ctx context.Context, idToken string) (*entity.Account, error)
 	SignUp(ctx context.Context, account *entity.Account) (*entity.AccessToken, error)
 	Login(ctx context.Context, email, password string) (*entity.AccessToken, error)
 	Me(ctx context.Context, accountID uint) (*entity.Account, error)
@@ -33,22 +35,31 @@ func (u *accountUsecase) SignUpWithFirebase(ctx context.Context, idToken string)
 	uid, err := u.authenticationService.VerifyToken(ctx, idToken)
 	if err != nil {
 		log.Println(err.Error())
-		return nil, err
+		return nil, &entity.UnexpectedError{Err: err}
 	}
 
 	user, err := u.authenticationService.GetUser(ctx, uid)
 	if err != nil {
 		log.Println(err.Error())
-		return nil, err
+		return nil, &entity.UnexpectedError{Err: err}
 	}
 
-	account, err := u.accountRepository.RegisterFirebaseUser(&user)
+	account := &entity.Account{
+		Username: user.Username,
+		Email:    user.Email,
+	}
+
+	err = u.accountRepository.CreateAccount(account)
 	if err != nil {
 		log.Println(err.Error())
-		return nil, err
+		return nil, &entity.UnexpectedError{Err: err}
 	}
 
 	return account, err
+}
+
+func (u *accountUsecase) LoginWithFirebase(ctx context.Context, idToken string) (*entity.Account, error) {
+	panic("implement me")
 }
 
 func (u *accountUsecase) SignUp(_ context.Context, account *entity.Account) (*entity.AccessToken, error) {
