@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"flag"
-	"go-firebase-auth-server/infrastructure/firebase"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"go-firebase-auth-server/infrastructure/firebase"
 
 	"go-firebase-auth-server/infrastructure/db"
 	"go-firebase-auth-server/infrastructure/persistence"
@@ -60,8 +61,8 @@ func main() {
 
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
-		log.Printf(" ⇨ http server started on %s", cnf.Server.Addr())
 		log.Printf(" ⇨ graceful timeout: %s", wait)
+		log.Printf(" ⇨ http server started on %s", cnf.Server.Addr())
 		if err = srv.ListenAndServe(); err != nil {
 			log.Println(err)
 		}
