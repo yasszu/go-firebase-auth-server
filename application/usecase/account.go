@@ -2,27 +2,53 @@ package usecase
 
 import (
 	"context"
-	"go-jwt-auth/domain/entity"
-	"go-jwt-auth/domain/repository"
-	"go-jwt-auth/infrastructure/jwt"
-	"go-jwt-auth/util"
+	"go-firebase-auth-server/domain/entity"
+	"go-firebase-auth-server/domain/repository"
+	"go-firebase-auth-server/domain/service"
+	"go-firebase-auth-server/infrastructure/jwt"
+	"go-firebase-auth-server/util"
 	"log"
 )
 
 type AccountUsecase interface {
+	SignUpWithFirebase(ctx context.Context, idToken string) (*entity.Account, error)
 	SignUp(ctx context.Context, account *entity.Account) (*entity.AccessToken, error)
 	Login(ctx context.Context, email, password string) (*entity.AccessToken, error)
 	Me(ctx context.Context, accountID uint) (*entity.Account, error)
 }
 
 type accountUsecase struct {
-	accountRepository repository.AccountRepository
+	accountRepository     repository.AccountRepository
+	authenticationService service.AuthenticationService
 }
 
-func NewAccountUsecase(accountRepository repository.AccountRepository) AccountUsecase {
+func NewAccountUsecase(accountRepository repository.AccountRepository, authenticationService service.AuthenticationService) AccountUsecase {
 	return &accountUsecase{
-		accountRepository: accountRepository,
+		accountRepository:     accountRepository,
+		authenticationService: authenticationService,
 	}
+}
+
+func (u *accountUsecase) SignUpWithFirebase(ctx context.Context, idToken string) (*entity.Account, error) {
+	uid, err := u.authenticationService.VerifyToken(ctx, idToken)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+
+	user, err := u.authenticationService.GetUser(ctx, uid)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+
+	account, err := u.accountRepository.RegisterFirebaseUser(&user)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, err
+	}
+
+	return account, err
 }
 
 func (u *accountUsecase) SignUp(_ context.Context, account *entity.Account) (*entity.AccessToken, error) {

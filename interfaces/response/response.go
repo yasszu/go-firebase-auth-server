@@ -3,7 +3,7 @@ package response
 import (
 	"encoding/json"
 	"errors"
-	"go-jwt-auth/domain/entity"
+	"go-firebase-auth-server/domain/entity"
 	"net/http"
 )
 

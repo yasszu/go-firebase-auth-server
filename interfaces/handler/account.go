@@ -1,14 +1,15 @@
 package handler
 
 import (
+	"go-firebase-auth-server/domain/service"
 	"net/http"
 
-	"go-jwt-auth/application/usecase"
-	"go-jwt-auth/domain/repository"
-	"go-jwt-auth/infrastructure/jwt"
-	"go-jwt-auth/interfaces/form"
-	"go-jwt-auth/interfaces/response"
-	"go-jwt-auth/interfaces/view"
+	"go-firebase-auth-server/application/usecase"
+	"go-firebase-auth-server/domain/repository"
+	"go-firebase-auth-server/infrastructure/jwt"
+	"go-firebase-auth-server/interfaces/form"
+	"go-firebase-auth-server/interfaces/response"
+	"go-firebase-auth-server/interfaces/view"
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
@@ -19,10 +20,10 @@ type AccountHandler struct {
 	accountUsecase usecase.AccountUsecase
 }
 
-func NewAccountHandler(db *gorm.DB, accountRepository repository.AccountRepository) *AccountHandler {
+func NewAccountHandler(db *gorm.DB, accountRepository repository.AccountRepository, authenticationService service.AuthenticationService) *AccountHandler {
 	return &AccountHandler{
 		db:             db,
-		accountUsecase: usecase.NewAccountUsecase(accountRepository),
+		accountUsecase: usecase.NewAccountUsecase(accountRepository, authenticationService),
 	}
 }
 

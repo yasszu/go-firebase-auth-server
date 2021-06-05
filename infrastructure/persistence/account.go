@@ -1,8 +1,9 @@
 package persistence
 
 import (
-	"go-jwt-auth/domain/entity"
-	"go-jwt-auth/domain/repository"
+	"go-firebase-auth-server/domain/entity"
+	"go-firebase-auth-server/domain/repository"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -39,4 +40,9 @@ func (r *AccountRepository) UpdateAccount(account *entity.Account) error {
 
 func (r *AccountRepository) DeleteAccount(accountID uint) error {
 	return r.db.Delete(&entity.Account{}, accountID).Error
+}
+
+func (r *AccountRepository) RegisterFirebaseUser(user *entity.FirebaseUser) (*entity.Account, error) {
+	log.Println(user)
+	return &entity.Account{}, nil
 }

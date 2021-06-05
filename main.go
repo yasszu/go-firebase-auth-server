@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"go-firebase-auth-server/infrastructure/firebase"
 	"log"
 	"net/http"
 	"os"
@@ -10,11 +11,11 @@ import (
 	"syscall"
 	"time"
 
-	"go-jwt-auth/infrastructure/db"
-	"go-jwt-auth/infrastructure/persistence"
-	"go-jwt-auth/interfaces/handler"
-	_middleware "go-jwt-auth/interfaces/middleware"
-	"go-jwt-auth/util"
+	"go-firebase-auth-server/infrastructure/db"
+	"go-firebase-auth-server/infrastructure/persistence"
+	"go-firebase-auth-server/interfaces/handler"
+	_middleware "go-firebase-auth-server/interfaces/middleware"
+	"go-firebase-auth-server/util"
 
 	"github.com/gorilla/mux"
 )
@@ -41,11 +42,12 @@ func main() {
 	v1.Use(middleware.JWT)
 
 	accountRepository := persistence.NewAccountRepository(conn)
+	authenticationService := firebase.NewAuthenticationService()
 
 	indexHandler := handler.NewIndexHandler(conn)
 	indexHandler.Register(root)
 
-	accountHandler := handler.NewAccountHandler(conn, accountRepository)
+	accountHandler := handler.NewAccountHandler(conn, accountRepository, authenticationService)
 	accountHandler.Register(root, v1)
 
 	srv := &http.Server{

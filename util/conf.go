@@ -2,7 +2,7 @@ package util
 
 import (
 	"fmt"
-	"go-jwt-auth/util/env"
+	"go-firebase-auth-server/util/env"
 )
 
 var (

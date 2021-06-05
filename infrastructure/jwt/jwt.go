@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"go-jwt-auth/domain/entity"
+	"go-firebase-auth-server/domain/entity"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
 )

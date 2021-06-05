@@ -21,4 +21,4 @@ services:
     volumes:
       - .:/go/src/app
     env_file:
-      - config/.env
+      - ./.env

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"go-jwt-auth/interfaces/response"
+	"go-firebase-auth-server/interfaces/response"
 	"net/http"
 
 	"github.com/gorilla/mux"

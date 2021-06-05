@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"go-jwt-auth/util"
+	"go-firebase-auth-server/util"
 	"time"
 
 	"gorm.io/driver/postgres"

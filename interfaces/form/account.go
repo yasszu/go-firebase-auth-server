@@ -1,8 +1,8 @@
 package form
 
 import (
-	"go-jwt-auth/domain/entity"
-	"go-jwt-auth/util"
+	"go-firebase-auth-server/domain/entity"
+	"go-firebase-auth-server/util"
 
 	_validate "github.com/go-playground/validator/v10"
 )

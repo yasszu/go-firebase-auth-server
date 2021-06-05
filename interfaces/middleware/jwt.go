@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"context"
-	"go-jwt-auth/domain/entity"
-	"go-jwt-auth/infrastructure/jwt"
-	"go-jwt-auth/interfaces/response"
+	"go-firebase-auth-server/domain/entity"
+	"go-firebase-auth-server/infrastructure/jwt"
+	"go-firebase-auth-server/interfaces/response"
 	"net/http"
 	"strings"
 )

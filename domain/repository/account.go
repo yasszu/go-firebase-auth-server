@@ -1,6 +1,6 @@
 package repository
 
-import "go-jwt-auth/domain/entity"
+import "go-firebase-auth-server/domain/entity"
 
 type AccountRepository interface {
 	GetAccountByEmail(email string) (*entity.Account, error)
@@ -8,4 +8,5 @@ type AccountRepository interface {
 	CreateAccount(account *entity.Account) error
 	UpdateAccount(account *entity.Account) error
 	DeleteAccount(accountID uint) error
+	RegisterFirebaseUser(user *entity.FirebaseUser) (*entity.Account, error)
 }

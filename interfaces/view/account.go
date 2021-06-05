@@ -1,7 +1,7 @@
 package view
 
 import (
-	"go-jwt-auth/domain/entity"
+	"go-firebase-auth-server/domain/entity"
 )
 
 type Account struct {
