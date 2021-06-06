@@ -10,6 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	"go-firebase-auth-server/application/usecase"
+
 	"github.com/gorilla/mux"
 
 	"go-firebase-auth-server/infrastructure/db"
@@ -36,19 +38,24 @@ func main() {
 
 	r := mux.NewRouter()
 
-	middleware := _middleware.NewMiddleware()
-	root := r.PathPrefix("").Subrouter()
-	v1 := r.PathPrefix("/v1").Subrouter()
-	v1.Use(middleware.JWT)
-
-	accountRepository := persistence.NewAccountRepository(conn)
+	//accountRepository := persistence.NewAccountRepository(conn)
 	authenticationService := firebase.NewAuthenticationService()
 
-	indexHandler := handler.NewIndexHandler(conn)
-	indexHandler.Register(root)
+	userRepository := persistence.NewUserRepository(conn)
+	userUsecase := usecase.NewUserUsecase(userRepository, authenticationService)
+	middleware := _middleware.NewMiddleware(userUsecase)
 
-	accountHandler := handler.NewAccountHandler(conn, accountRepository, authenticationService)
-	accountHandler.Register(root, v1)
+	indexHandler := handler.NewIndexHandler(conn)
+	userHandler := handler.NewUserHandler(conn, userUsecase)
+	//accountHandler := handler.NewAccountHandler(conn, accountRepository, authenticationService)
+
+	root := r.PathPrefix("").Subrouter()
+	v1 := r.PathPrefix("/v1").Subrouter()
+	v1.Use(middleware.FirebaseAuth)
+
+	indexHandler.Register(root)
+	userHandler.Register(root, v1)
+	//accountHandler.Register(root, v1)
 
 	srv := &http.Server{
 		Addr:         cnf.Server.Addr(),

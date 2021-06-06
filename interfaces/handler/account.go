@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"go-firebase-auth-server/domain/service"
 	"net/http"
+
+	"go-firebase-auth-server/domain/service"
 
 	"go-firebase-auth-server/application/usecase"
 	"go-firebase-auth-server/domain/repository"
@@ -42,19 +43,19 @@ func (h *AccountHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := f.Validate(); err != nil {
-		response.Error(w, response.Status(err), err.Error())
+		response.Error(w, response.Status(err), err)
 		return
 	}
 
 	account, err := f.Entity()
 	if err != nil {
-		response.Error(w, response.Status(err), err.Error())
+		response.Error(w, response.Status(err), err)
 		return
 	}
 
 	token, err := h.accountUsecase.SignUp(r.Context(), &account)
 	if err != nil {
-		response.Error(w, response.Status(err), err.Error())
+		response.Error(w, response.Status(err), err)
 		return
 	}
 
@@ -68,7 +69,7 @@ func (h *AccountHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	token, err := h.accountUsecase.Login(r.Context(), email, password)
 	if err != nil {
-		response.Error(w, response.Status(err), err.Error())
+		response.Error(w, response.Status(err), err)
 		return
 	}
 
@@ -85,7 +86,7 @@ func (h *AccountHandler) Me(w http.ResponseWriter, r *http.Request) {
 
 	account, err := h.accountUsecase.Me(r.Context(), accountID)
 	if err != nil {
-		response.Error(w, response.Status(err), err.Error())
+		response.Error(w, response.Status(err), err)
 		return
 	}
 

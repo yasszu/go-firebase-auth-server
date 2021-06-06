@@ -3,8 +3,10 @@ package response
 import (
 	"encoding/json"
 	"errors"
-	"go-firebase-auth-server/domain/entity"
+	"fmt"
 	"net/http"
+
+	"go-firebase-auth-server/domain/entity"
 )
 
 func JSON(w http.ResponseWriter, code int, payload interface{}) {
@@ -14,9 +16,9 @@ func JSON(w http.ResponseWriter, code int, payload interface{}) {
 	_, _ = w.Write(response)
 }
 
-func Error(w http.ResponseWriter, code int, message string) {
+func Error(w http.ResponseWriter, code int, message interface{}) {
 	JSON(w, code, map[string]string{
-		"error": message,
+		"error": fmt.Sprint(message),
 	})
 }
 
