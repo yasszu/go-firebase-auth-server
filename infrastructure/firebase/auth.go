@@ -11,13 +11,11 @@ import (
 	"firebase.google.com/go/v4/auth"
 )
 
-var _ service.AuthenticationService = &AuthenticationService{}
-
 type AuthenticationService struct {
 	client *auth.Client
 }
 
-func NewAuthenticationService() AuthenticationService {
+func NewAuthenticationService() service.AuthenticationService {
 	app, err := _firebase.NewApp(context.Background(), nil)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
@@ -28,7 +26,7 @@ func NewAuthenticationService() AuthenticationService {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
-	return AuthenticationService{
+	return &AuthenticationService{
 		client: client,
 	}
 }
@@ -52,18 +50,15 @@ func (s AuthenticationService) SetClaims(ctx context.Context, uid string, claims
 	return nil
 }
 
-func (s AuthenticationService) GetUser(ctx context.Context, uid string) (entity.FirebaseUser, error) {
-	// Lookup the user associated with the specified uid.
-	user, err := s.client.GetUser(ctx, uid)
+func (s AuthenticationService) GetFirebaseUser(ctx context.Context, uid string) (*entity.User, error) {
+	userRecord, err := s.client.GetUser(ctx, uid)
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
-	// The claims can be accessed on the user record.
-	if admin, ok := user.CustomClaims["admin"]; ok {
-		if admin.(bool) {
-			log.Println(admin)
-		}
-	}
-
-	return entity.FirebaseUser{}, err
+	return &entity.User{
+		UID:      userRecord.UID,
+		Username: userRecord.DisplayName,
+		Email:    userRecord.Email,
+	}, nil
 }

@@ -10,15 +10,14 @@ import (
 	"syscall"
 	"time"
 
-	"go-firebase-auth-server/infrastructure/firebase"
+	"github.com/gorilla/mux"
 
 	"go-firebase-auth-server/infrastructure/db"
+	"go-firebase-auth-server/infrastructure/firebase"
 	"go-firebase-auth-server/infrastructure/persistence"
 	"go-firebase-auth-server/interfaces/handler"
 	_middleware "go-firebase-auth-server/interfaces/middleware"
 	"go-firebase-auth-server/util"
-
-	"github.com/gorilla/mux"
 )
 
 func main() {

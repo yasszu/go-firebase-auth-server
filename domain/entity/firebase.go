@@ -12,8 +12,15 @@ type FirebaseAuthentication struct {
 }
 
 type FirebaseUser struct {
-	AccountID uint
-	UID       string
-	Username  string
-	Email     string
+	UID      string
+	Username string
+	Email    string
+}
+
+func (u *FirebaseUser) User() *User {
+	return &User{
+		UID:      u.UID,
+		Username: u.Username,
+		Email:    u.Email,
+	}
 }

@@ -38,7 +38,7 @@ func (u *accountUsecase) SignUpWithFirebase(ctx context.Context, idToken string)
 		return nil, &entity.UnexpectedError{Err: err}
 	}
 
-	user, err := u.authenticationService.GetUser(ctx, uid)
+	user, err := u.authenticationService.GetFirebaseUser(ctx, uid)
 	if err != nil {
 		log.Println(err.Error())
 		return nil, &entity.UnexpectedError{Err: err}
