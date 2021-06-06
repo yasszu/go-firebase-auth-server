@@ -13,8 +13,9 @@ import (
 )
 
 type UserUsecase interface {
-	SignUp(ctx context.Context, idToken string) (*entity.User, error)
-	Me(ctx context.Context, uid string) (*entity.User, error)
+	Authenticate(ctx context.Context, idToken string) (*entity.User, error)
+	VerifyToken(ctx context.Context, idToken string) (*entity.User, error)
+	GetUser(ctx context.Context, uid string) (*entity.User, error)
 }
 
 type userUsecase struct {
@@ -32,28 +33,58 @@ func NewUserUsecase(
 	}
 }
 
-func (u userUsecase) SignUp(ctx context.Context, idToken string) (*entity.User, error) {
+func (u userUsecase) Authenticate(ctx context.Context, idToken string) (*entity.User, error) {
 	uid, err := u.authenticationService.VerifyToken(ctx, idToken)
 	if err != nil {
 		log.Println("Error: ", err)
-		return nil, &entity.UnexpectedError{Err: err}
+		return nil, &entity.UnauthorizedError{Massage: "failed verifying idToken"}
 	}
 
-	user, err := u.authenticationService.GetFirebaseUser(ctx, uid)
+	user, err := u.userRepository.GetByUID(uid)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			user, err = u.authenticationService.GetFirebaseUser(ctx, uid)
+			if err != nil {
+				log.Println("Error: ", err)
+				return nil, &entity.UnexpectedError{Err: err}
+			}
+
+			if err = u.userRepository.Crete(user); err != nil {
+				log.Println("Error: ", err)
+				return nil, &entity.UnexpectedError{Err: err}
+			}
+
+			return user, nil
+		}
+
 		log.Println("Error: ", err)
 		return nil, &entity.UnexpectedError{Err: err}
-	}
-
-	if err = u.userRepository.Crete(user); err != nil {
-		log.Println("Error: ", err)
-		return nil, err
 	}
 
 	return user, nil
 }
 
-func (u userUsecase) Me(ctx context.Context, uid string) (*entity.User, error) {
+func (u userUsecase) VerifyToken(ctx context.Context, idToken string) (*entity.User, error) {
+	uid, err := u.authenticationService.VerifyToken(ctx, idToken)
+	if err != nil {
+		log.Println("Error: ", err)
+		return nil, &entity.UnauthorizedError{Massage: "error verifying idToken"}
+	}
+
+	user, err := u.userRepository.GetByUID(uid)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, &entity.UnauthorizedError{Massage: "not signup"}
+		}
+
+		log.Println("Error: ", err)
+		return nil, &entity.UnexpectedError{Err: err}
+	}
+
+	return user, nil
+}
+
+func (u userUsecase) GetUser(ctx context.Context, uid string) (*entity.User, error) {
 	user, err := u.userRepository.GetByUID(uid)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

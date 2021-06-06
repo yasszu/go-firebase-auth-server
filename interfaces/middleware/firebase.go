@@ -16,7 +16,7 @@ func (m *Middleware) FirebaseAuth(next http.Handler) http.Handler {
 		if len(extractedToken) == 2 {
 			idToken := strings.TrimSpace(extractedToken[1])
 
-			user, err := m.userUsecase.Verify(r.Context(), idToken)
+			user, err := m.userUsecase.VerifyToken(r.Context(), idToken)
 			if err != nil {
 				response.Error(w, response.Status(err), err)
 				return
@@ -26,7 +26,7 @@ func (m *Middleware) FirebaseAuth(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		} else {
-			response.Error(w, http.StatusBadRequest, "BadRequest")
+			response.Error(w, http.StatusBadRequest, "Bad Request")
 			return
 		}
 	})

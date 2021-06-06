@@ -14,9 +14,9 @@
     ```
 
 ## API
-### POST /signup
+### POST /authenticate
 ```sh
-curl --location --request POST 'localhost:8888/signup' \
+curl --location --request POST 'localhost:8888/authenticate ' \
 --form 'id_token={your_id_token}'
 ```
 

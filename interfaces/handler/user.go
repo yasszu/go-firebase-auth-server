@@ -25,14 +25,14 @@ func NewUserHandler(db *gorm.DB, userUsecase usecase.UserUsecase) *UserHandler {
 }
 
 func (h *UserHandler) Register(root, v1 *mux.Router) {
-	root.HandleFunc("/signup", h.Signup).Methods("POST")
+	root.HandleFunc("/authenticate", h.Authenticate).Methods("POST")
 	v1.HandleFunc("/me", h.Me).Methods("GET")
 }
 
-func (h *UserHandler) Signup(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	idToken := r.FormValue("id_token")
 
-	user, err := h.userUsecase.SignUp(r.Context(), idToken)
+	user, err := h.userUsecase.Authenticate(r.Context(), idToken)
 	if err != nil {
 		response.Error(w, response.Status(err), err.Error())
 		return
