@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	firebase.google.com/go/v4 v4.6.0
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgproto3/v2 v2.0.4 // indirect
