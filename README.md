@@ -5,12 +5,13 @@
    ```sh
    cp .env.default .env
    ```
+1. Download [service-account-file.json](https://firebase.google.com/docs/admin/setup)
 1. Edit the `.env` file
     
 ### Run Server
 1. Run containers
     ```
-    $ docker-compose up
+    docker-compose up
     ```
 
 ## API
