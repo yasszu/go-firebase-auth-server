@@ -38,16 +38,12 @@ func main() {
 
 	r := mux.NewRouter()
 
-	//accountRepository := persistence.NewAccountRepository(conn)
 	authenticationService := firebase.NewAuthenticationService()
-
 	userRepository := persistence.NewUserRepository(conn)
 	userUsecase := usecase.NewUserUsecase(userRepository, authenticationService)
 	middleware := _middleware.NewMiddleware(userUsecase)
-
 	indexHandler := handler.NewIndexHandler(conn)
 	userHandler := handler.NewUserHandler(conn, userUsecase)
-	//accountHandler := handler.NewAccountHandler(conn, accountRepository, authenticationService)
 
 	root := r.PathPrefix("").Subrouter()
 	v1 := r.PathPrefix("/v1").Subrouter()
@@ -55,7 +51,6 @@ func main() {
 
 	indexHandler.Register(root)
 	userHandler.Register(root, v1)
-	//accountHandler.Register(root, v1)
 
 	srv := &http.Server{
 		Addr:         cnf.Server.Addr(),

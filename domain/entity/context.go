@@ -6,7 +6,6 @@ type contextKey int
 
 const (
 	ContextKeyUser contextKey = iota
-	ContextKeyAccountID
 )
 
 func GetCurrentUser(ctx context.Context) (*User, error) {

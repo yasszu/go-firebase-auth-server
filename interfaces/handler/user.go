@@ -3,6 +3,8 @@ package handler
 import (
 	"net/http"
 
+	"go-firebase-auth-server/interfaces/form"
+
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 
@@ -30,9 +32,16 @@ func (h *UserHandler) Register(root, v1 *mux.Router) {
 }
 
 func (h *UserHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
-	idToken := r.FormValue("id_token")
+	f := &form.Authenticate{
+		IDToken: r.FormValue("id_token"),
+	}
 
-	user, err := h.userUsecase.Authenticate(r.Context(), idToken)
+	if err := f.Validate(); err != nil {
+		response.Error(w, http.StatusBadRequest, "Bad Request")
+		return
+	}
+
+	user, err := h.userUsecase.Authenticate(r.Context(), f.IDToken)
 	if err != nil {
 		response.Error(w, response.Status(err), err.Error())
 		return
