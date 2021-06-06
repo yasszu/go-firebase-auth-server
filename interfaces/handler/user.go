@@ -3,13 +3,12 @@ package handler
 import (
 	"net/http"
 
-	"go-firebase-auth-server/interfaces/form"
-
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 
 	"go-firebase-auth-server/application/usecase"
 	"go-firebase-auth-server/domain/entity"
+	"go-firebase-auth-server/interfaces/form"
 	"go-firebase-auth-server/interfaces/response"
 	"go-firebase-auth-server/interfaces/view"
 )
