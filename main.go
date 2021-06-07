@@ -45,6 +45,7 @@ func main() {
 	indexHandler := handler.NewIndexHandler(conn)
 	userHandler := handler.NewUserHandler(conn, userUsecase)
 
+	r.Use(middleware.CQRS)
 	root := r.PathPrefix("").Subrouter()
 	v1 := r.PathPrefix("/v1").Subrouter()
 	v1.Use(middleware.FirebaseAuth)
