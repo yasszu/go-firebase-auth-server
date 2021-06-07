@@ -10,10 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"go-firebase-auth-server/application/usecase"
-
 	"github.com/gorilla/mux"
 
+	"go-firebase-auth-server/application/usecase"
 	"go-firebase-auth-server/infrastructure/db"
 	"go-firebase-auth-server/infrastructure/firebase"
 	"go-firebase-auth-server/infrastructure/persistence"
@@ -45,6 +44,7 @@ func main() {
 	indexHandler := handler.NewIndexHandler(conn)
 	userHandler := handler.NewUserHandler(conn, userUsecase)
 
+	r.Use(middleware.Logging)
 	r.Use(middleware.CQRS)
 	root := r.PathPrefix("").Subrouter()
 	v1 := r.PathPrefix("/v1").Subrouter()

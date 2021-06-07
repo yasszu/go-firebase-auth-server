@@ -5,10 +5,11 @@ type JWT struct {
 }
 
 func NewJWT() JWT {
-	e := JWT{Secret: Env{
-		Key:   "JWT_SECRET",
-		Value: "your_secret_key",
-	}}
+	e := JWT{
+		Secret: Env{
+			Key:   "JWT_SECRET",
+			Value: "your_secret_key",
+		}}
 	e.load()
 	return e
 }

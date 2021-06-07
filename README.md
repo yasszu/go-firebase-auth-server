@@ -17,7 +17,7 @@
 ## API
 ### POST /authenticate
 ```sh
-curl --location --request POST 'localhost:8888/authenticate ' \
+curl --location --request POST 'localhost:8888/authenticate' \
 --form 'id_token={your_id_token}'
 ```
 
