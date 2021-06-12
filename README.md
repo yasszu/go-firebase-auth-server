@@ -7,13 +7,18 @@
    ```
 1. Download [service-account-file.json](https://firebase.google.com/docs/admin/setup)
 1. Edit the `.env` file
+1. Add login page
+   ```sh
+   cp ./config.js ./public/javascripts/config.js
+   ```
+1. Set Firebase configuration at `login.html`
     
 ### Run Server
 1. Run containers
     ```
     docker-compose up
     ```
-
+1. Open http://localhost:8888/
 ## API
 ### POST /authenticate
 ```sh

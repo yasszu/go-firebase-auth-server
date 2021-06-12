@@ -4,3 +4,4 @@
 .envrc
 tmp/
 credentials/*
+config.js
