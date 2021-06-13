@@ -45,7 +45,7 @@ func main() {
 	userHandler := handler.NewUserHandler(conn, userUsecase)
 
 	r.Use(middleware.Logging)
-	r.Use(middleware.CQRS)
+	r.Use(middleware.CORS)
 	root := r.PathPrefix("").Subrouter()
 	v1 := r.PathPrefix("/v1").Subrouter()
 	v1.Use(middleware.FirebaseAuth)
