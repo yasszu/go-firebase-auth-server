@@ -11,7 +11,7 @@
    ```sh
    cp ./config.js ./public/javascripts/config.js
    ```
-1. Set Firebase configuration at `login.html`
+1. Set Firebase configuration at `public/javascripts/config.js`
     
 ### Run Server
 1. Run containers
