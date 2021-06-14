@@ -42,6 +42,7 @@ func main() {
 	userUsecase := usecase.NewUserUsecase(userRepository, authenticationService)
 	middleware := _middleware.NewMiddleware(userUsecase)
 	indexHandler := handler.NewIndexHandler(conn)
+	authHandler := handler.NewAuthHandler(conn, userUsecase)
 	userHandler := handler.NewUserHandler(conn, userUsecase)
 
 	r.Use(middleware.Logging)
@@ -51,7 +52,8 @@ func main() {
 	v1.Use(middleware.FirebaseAuth)
 
 	indexHandler.Register(root)
-	userHandler.Register(root, v1)
+	authHandler.Register(root)
+	userHandler.Register(v1)
 
 	srv := &http.Server{
 		Addr:         cnf.Server.Addr(),

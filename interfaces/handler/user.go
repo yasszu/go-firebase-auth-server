@@ -8,7 +8,6 @@ import (
 
 	"go-firebase-auth-server/application/usecase"
 	"go-firebase-auth-server/domain/entity"
-	"go-firebase-auth-server/interfaces/form"
 	"go-firebase-auth-server/interfaces/response"
 	"go-firebase-auth-server/interfaces/view"
 )
@@ -25,28 +24,8 @@ func NewUserHandler(db *gorm.DB, userUsecase usecase.UserUsecase) *UserHandler {
 	}
 }
 
-func (h *UserHandler) Register(root, v1 *mux.Router) {
-	root.HandleFunc("/authenticate", h.Authenticate).Methods("POST")
-	v1.HandleFunc("/me", h.Me).Methods("GET")
-}
-
-func (h *UserHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
-	f := &form.Authenticate{
-		IDToken: r.FormValue("id_token"),
-	}
-
-	if err := f.Validate(); err != nil {
-		response.Error(w, http.StatusBadRequest, "Bad Request")
-		return
-	}
-
-	user, err := h.userUsecase.Authenticate(r.Context(), f.IDToken)
-	if err != nil {
-		response.Error(w, response.Status(err), err.Error())
-		return
-	}
-
-	response.JSON(w, http.StatusOK, view.NewUser(user))
+func (h *UserHandler) Register(r *mux.Router) {
+	r.HandleFunc("/me", h.Me).Methods("GET")
 }
 
 func (h *UserHandler) Me(w http.ResponseWriter, r *http.Request) {
