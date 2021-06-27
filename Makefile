@@ -17,3 +17,7 @@ migrate-up:
 migrate-down:
 	docker exec -it go-firebase-auth-server_server_1 /bin/bash -c "sql-migrate down -limit=$(LIMIT)"
 	docker exec -it go-firebase-auth-server_server_1 /bin/bash -c "sql-migrate status"
+
+.PHONY: run
+run:
+	docker-compose up

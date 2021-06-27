@@ -15,9 +15,13 @@
     
 ### Run Server
 1. Run containers
-    ```
-    docker-compose up
-    ```
+   ```
+   make run
+   ```
+1. Run migration
+   ```
+   make migrate-up
+   ```
 1. Open http://localhost:8888/
 ## API
 ### POST /authenticate

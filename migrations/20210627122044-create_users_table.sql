@@ -1,3 +1,5 @@
+
+-- +migrate Up
 CREATE TABLE users
 (
     id         SERIAL,
@@ -10,3 +12,6 @@ CREATE TABLE users
 );
 
 CREATE UNIQUE INDEX users_uid_uindex ON users (uid);
+
+-- +migrate Down
+DROP TABLE users;
