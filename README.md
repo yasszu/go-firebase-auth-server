@@ -3,13 +3,13 @@
 ### Setup environment
 1. Create a `.env` file
    ```sh
-   cp .env.default .env
+   cp build/local/server/.env.default build/local/server/.env
    ```
 1. Download [service-account-file.json](https://firebase.google.com/docs/admin/setup)
 1. Edit the `.env` file
 1. Add login page
    ```sh
-   cp ./config.js ./public/javascripts/config.js
+   cp ./config.default.js ./public/javascripts/config.js
    ```
 1. Set Firebase configuration at `public/javascripts/config.js`
     

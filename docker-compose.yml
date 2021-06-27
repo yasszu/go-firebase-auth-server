@@ -14,11 +14,11 @@ services:
     image: adminer
     ports:
       - 8080:8080
-  api:
+  server:
     build: ./build/local/server
     ports:
       - "8888:8888"
     volumes:
       - .:/go/src/app
     env_file:
-      - ./.env
+      - ./build/local/server/.env

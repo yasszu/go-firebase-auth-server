@@ -1,6 +1,6 @@
 .DS_Store
 .idea/
-.env
+build/local/server/.env
 .envrc
 tmp/
 credentials/*
