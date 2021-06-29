@@ -1,3 +1,4 @@
+PACKAGE_NAME=go-firebase-auth-server
 SERVER=go-firebase-auth-server_server_1
 LIMIT=0
 
@@ -22,3 +23,14 @@ migrate-down:
 .PHONY: run
 run:
 	docker-compose up
+
+.PHONY: build 
+build:
+	docker build -f build/prod/server/Dockerfile -t $(PACKAGE_NAME) .
+
+.PHONY: submit
+submit:
+	docker tag $(PACKAGE_NAME):latest gcr.io/${PROJECT_ID}/$(PACKAGE_NAME):latest
+	docker push gcr.io/${PROJECT_ID}/$(PACKAGE_NAME):latest
+
+

@@ -13,10 +13,10 @@ services:
     ports:
       - 8080:8080
   server:
-    build: ./build/local/server
+    build: build/debug/server
     ports:
       - "8888:8888"
     volumes:
       - .:/go/src/app
     env_file:
-      - ./build/local/server/.env
+      - build/debug/server/.env
