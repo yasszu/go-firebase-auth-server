@@ -4,21 +4,21 @@ LIMIT=0
 
 .PHONY: migrate-status
 migrate-status:
-	docker exec -it $(SERVER) /bin/bash -c "sql-migrate status"
+	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate status -env="development"'
 
 .PHONY: migrate-new
 migrate-new:
-	docker exec -it $(SERVER) /bin/bash -c "sql-migrate new $(NAME)"
+	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate new $(NAME) -env="development"'
 
 .PHONY: migrate-up
 migrate-up:
-	docker exec -it $(SERVER) /bin/bash -c "sql-migrate up"
-	docker exec -it $(SERVER) /bin/bash -c "sql-migrate status"
+	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate up -env="development"'
+	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate status -env="development"'
 
 .PHONY: migrate-down
 migrate-down:
-	docker exec -it $(SERVER) /bin/bash -c "sql-migrate down -limit=$(LIMIT)"
-	docker exec -it $(SERVER) /bin/bash -c "sql-migrate status"
+	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate down -env="development" -limit=$(LIMIT)'
+	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate status -env="development"'
 
 .PHONY: run
 run:
