@@ -20,6 +20,11 @@ migrate-down:
 	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate down -env="development" -limit=$(LIMIT)'
 	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate status -env="development"'
 
+.PHONY: migrate-up-test
+migrate-up-test:
+	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate up -env="test"'
+	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate status -env="test"'
+
 .PHONY: run
 run:
 	docker-compose up

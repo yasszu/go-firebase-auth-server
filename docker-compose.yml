@@ -8,10 +8,14 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - 5432:5432
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+
   adminer:
     image: adminer
     ports:
       - 8080:8080
+
   server:
     build: build/debug/server
     ports:
@@ -20,3 +24,5 @@ services:
       - .:/go/src/app
     env_file:
       - build/debug/server/.env
+    depends_on:
+      - postgres
