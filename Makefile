@@ -29,13 +29,15 @@ migrate-up-test:
 run:
 	docker-compose up
 
-.PHONY: build 
-build:
+.PHONY: test
+test:
+	docker compose exec server go test ./...
+
+.PHONY: docker-build
+docker-build:
 	docker build -f build/prod/server/Dockerfile -t $(PACKAGE_NAME) .
 
-.PHONY: submit
-submit:
+.PHONY: docker-submit
+docker-submit:
 	docker tag $(PACKAGE_NAME):latest gcr.io/${PROJECT_ID}/$(PACKAGE_NAME):latest
 	docker push gcr.io/${PROJECT_ID}/$(PACKAGE_NAME):latest
-
-
