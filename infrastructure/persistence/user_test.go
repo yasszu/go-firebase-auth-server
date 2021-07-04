@@ -12,6 +12,50 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestUserRepository_Crete(t *testing.T) {
+	tests := map[string]struct {
+		user *entity.User
+		want bool
+	}{
+		"success": {
+			user: &entity.User{
+				UID:      "abcdefg",
+				Username: "name",
+				Email:    "name@example.com",
+			},
+			want: true,
+		},
+		"failure": {
+			user: &entity.User{
+				UID:      "uid1",
+				Username: "name",
+				Email:    "name@example.com",
+			},
+			want: false,
+		},
+	}
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			testDB := openTestDB()
+			txDB, err := testDB.DB()
+			assert.NoError(t, err)
+			defer txDB.Close()
+
+			testDB.Create(&entity.User{ID: 1, UID: "uid1", Username: "Tom", Email: "tom@test.com"})
+
+			userRepository := persistence.NewUserRepository(testDB)
+
+			err = userRepository.Crete(tt.user)
+			if tt.want {
+				assert.NoError(t, err)
+			} else {
+				assert.NotEmpty(t, err)
+			}
+		})
+	}
+}
+
 func TestUserRepository_GetByUID(t *testing.T) {
 	t.Parallel()
 
