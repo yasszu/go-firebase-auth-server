@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"go-firebase-auth-server/util"
 
@@ -37,4 +38,8 @@ func openTestDB() *gorm.DB {
 	}
 
 	return gormDB
+}
+
+func now() time.Time {
+	return time.Date(2021, 7, 5, 12, 13, 24, 0, time.UTC)
 }
