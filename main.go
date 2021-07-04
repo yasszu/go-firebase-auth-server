@@ -30,9 +30,9 @@ func main() {
 	cnf := util.NewConf()
 
 	// Establish DB connection
-	conn, err := db.NewConn(cnf)
+	conn, err := db.NewConn()
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 
 	r := mux.NewRouter()

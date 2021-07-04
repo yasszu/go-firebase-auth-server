@@ -36,6 +36,25 @@ type Postgres struct {
 	Username string
 	Password string
 	DB       string
+	TestDB   string
+}
+
+func (p Postgres) DSN() string {
+	return fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
+		p.Host,
+		p.Port,
+		p.Username,
+		p.DB,
+		p.Password)
+}
+
+func (p Postgres) TestDSN() string {
+	return fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
+		p.Host,
+		p.Port,
+		p.Username,
+		p.TestDB,
+		p.Password)
 }
 
 type JWT struct {
@@ -55,5 +74,6 @@ func (c *Conf) load() {
 	c.Postgres.Username = v.PostgresUser.Value
 	c.Postgres.Password = v.PostgresPassword.Value
 	c.Postgres.DB = v.PostgresDB.Value
+	c.Postgres.TestDB = v.PostgresTestDB.Value
 	c.JWT.Secret = v.JWTSecret.Value
 }

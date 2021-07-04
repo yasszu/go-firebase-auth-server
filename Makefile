@@ -31,7 +31,7 @@ run:
 
 .PHONY: test
 test:
-	docker compose exec server go test ./...
+	docker compose exec server go test ./... -count=1
 
 .PHONY: docker-build
 docker-build:
