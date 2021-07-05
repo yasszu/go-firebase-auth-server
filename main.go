@@ -18,7 +18,7 @@ import (
 	"go-firebase-auth-server/infrastructure/persistence"
 	"go-firebase-auth-server/interfaces/handler"
 	_middleware "go-firebase-auth-server/interfaces/middleware"
-	"go-firebase-auth-server/util"
+	"go-firebase-auth-server/util/conf"
 )
 
 func main() {
@@ -26,13 +26,10 @@ func main() {
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*30, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
 
-	// Load conf
-	cnf := util.NewConf()
-
 	// Establish DB connection
-	conn, err := db.NewConn(cnf)
+	conn, err := db.NewConn()
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 
 	r := mux.NewRouter()
@@ -56,7 +53,7 @@ func main() {
 	userHandler.Register(v1)
 
 	srv := &http.Server{
-		Addr:         cnf.Server.Addr(),
+		Addr:         conf.Server.Addr(),
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
@@ -66,7 +63,7 @@ func main() {
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
 		log.Printf(" ⇨ graceful timeout: %s", wait)
-		log.Printf(" ⇨ http server started on %s", cnf.Server.Addr())
+		log.Printf(" ⇨ http server started on %s", conf.Server.Addr())
 		if err = srv.ListenAndServe(); err != nil {
 			log.Println(err)
 		}
