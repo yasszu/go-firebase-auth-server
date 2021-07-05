@@ -51,6 +51,16 @@ func TestUserRepository_Crete(t *testing.T) {
 }
 
 func TestUserRepository_GetByUID(t *testing.T) {
+	testDB := openTestDB()
+	testDB.Create(&entity.User{
+		ID:        1,
+		UID:       "uid1",
+		Username:  "Tom",
+		Email:     "tom@test.com",
+		CreatedAt: now(),
+		UpdatedAt: now(),
+	})
+
 	tests := map[string]struct {
 		uid  string
 		want *entity.User
@@ -68,8 +78,13 @@ func TestUserRepository_GetByUID(t *testing.T) {
 			},
 			err: nil,
 		},
-		"failure": {
-			uid:  "failure",
+		"not found": {
+			uid:  "illegal-uid",
+			want: nil,
+			err:  gorm.ErrRecordNotFound,
+		},
+		"request empty": {
+			uid:  "",
 			want: nil,
 			err:  gorm.ErrRecordNotFound,
 		},
@@ -77,12 +92,7 @@ func TestUserRepository_GetByUID(t *testing.T) {
 	for name, tt := range tests {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
-			testDB := openTestDB()
-			txDB, err := testDB.DB()
-			assert.NoError(t, err)
-			defer txDB.Close()
-
-			testDB.Create(&entity.User{ID: 1, UID: "uid1", Username: "Tom", Email: "tom@test.com", CreatedAt: now(), UpdatedAt: now()})
+			t.Parallel()
 
 			userRepository := persistence.NewUserRepository(testDB)
 			got, err := userRepository.GetByUID(tt.uid)
