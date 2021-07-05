@@ -9,7 +9,6 @@ type Variables struct {
 	PostgresTestDB   Env
 	ServerHost       Env
 	ServerPort       Env
-	JWTSecret        Env
 }
 
 func NewVariables() Variables {
@@ -46,10 +45,6 @@ func NewVariables() Variables {
 			Key:   "SERVER_PORT",
 			Value: "8888",
 		},
-		JWTSecret: Env{
-			Key:   "JWT_SECRET",
-			Value: "your_secret_key",
-		},
 	}
 	v.load()
 	return v
@@ -64,5 +59,4 @@ func (v *Variables) load() {
 	v.PostgresTestDB.Load()
 	v.ServerHost.Load()
 	v.ServerPort.Load()
-	v.JWTSecret.Load()
 }

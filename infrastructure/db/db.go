@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"go-firebase-auth-server/util"
+	"go-firebase-auth-server/util/conf"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,7 +22,7 @@ func NewConn() (*gorm.DB, error) {
 		if err == nil {
 			break
 		}
-		fmt.Println("Waiting for getting the connection of Postgres...")
+		fmt.Println("Waiting for getting the connection of postgres...")
 		time.Sleep(waitingTime)
 		db, err = openConn()
 	}
@@ -31,7 +31,7 @@ func NewConn() (*gorm.DB, error) {
 }
 
 func openConn() (*gorm.DB, error) {
-	dialector := postgres.Open(util.NewConf().DSN())
+	dialector := postgres.Open(conf.Postgres.DSN())
 	return gorm.Open(dialector, &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})

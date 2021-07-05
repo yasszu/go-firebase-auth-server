@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"go-firebase-auth-server/util"
+	"go-firebase-auth-server/util/conf"
 
 	"github.com/DATA-DOG/go-txdb"
 	_ "github.com/lib/pq"
@@ -17,13 +17,13 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	txdb.Register("txdb", "postgres", util.NewConf().DSN())
+	txdb.Register("txdb", "postgres", conf.Postgres.DSN())
 	code := m.Run()
 	os.Exit(code)
 }
 
 func openTestDB() *gorm.DB {
-	txDB, err := sql.Open("txdb", util.NewConf().TestDSN())
+	txDB, err := sql.Open("txdb", conf.Postgres.TestDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
