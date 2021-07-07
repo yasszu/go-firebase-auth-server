@@ -8,7 +8,6 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/gorm"
 )
 
 func TestUserRepository_Crete(t *testing.T) {
@@ -64,7 +63,6 @@ func TestUserRepository_GetByUID(t *testing.T) {
 	tests := map[string]struct {
 		uid  string
 		want *entity.User
-		err  error
 	}{
 		"success": {
 			uid: "uid1",
@@ -76,17 +74,14 @@ func TestUserRepository_GetByUID(t *testing.T) {
 				CreatedAt: now(),
 				UpdatedAt: now(),
 			},
-			err: nil,
 		},
 		"not found": {
 			uid:  "illegal-uid",
 			want: nil,
-			err:  gorm.ErrRecordNotFound,
 		},
 		"request empty": {
 			uid:  "",
 			want: nil,
-			err:  gorm.ErrRecordNotFound,
 		},
 	}
 	for name, tt := range tests {
@@ -96,7 +91,7 @@ func TestUserRepository_GetByUID(t *testing.T) {
 
 			userRepository := persistence.NewUserRepository(testDB)
 			got, err := userRepository.GetByUID(tt.uid)
-			assert.Equal(t, tt.err, err)
+			assert.NoError(t, err)
 			assert.Empty(t, cmp.Diff(tt.want, got))
 		})
 	}

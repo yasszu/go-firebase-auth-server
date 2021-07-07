@@ -2,10 +2,7 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"log"
-
-	"gorm.io/gorm"
 
 	"go-firebase-auth-server/domain/entity"
 	"go-firebase-auth-server/domain/repository"
@@ -42,23 +39,21 @@ func (u userUsecase) Authenticate(ctx context.Context, idToken string) (*entity.
 
 	user, err := u.userRepository.GetByUID(uid)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			user, err = u.authenticationService.GetFirebaseUser(ctx, uid)
-			if err != nil {
-				log.Println("Error: ", err)
-				return nil, &entity.UnexpectedError{Err: err}
-			}
-
-			if err = u.userRepository.Crete(user); err != nil {
-				log.Println("Error: ", err)
-				return nil, &entity.UnexpectedError{Err: err}
-			}
-
-			return user, nil
-		}
-
 		log.Println("Error: ", err)
 		return nil, &entity.UnexpectedError{Err: err}
+	}
+
+	if user == nil {
+		user, err = u.authenticationService.GetFirebaseUser(ctx, uid)
+		if err != nil {
+			log.Println("Error: ", err)
+			return nil, &entity.UnexpectedError{Err: err}
+		}
+		if err = u.userRepository.Crete(user); err != nil {
+			log.Println("Error: ", err)
+			return nil, &entity.UnexpectedError{Err: err}
+		}
+		return user, nil
 	}
 
 	return user, nil
@@ -73,26 +68,26 @@ func (u userUsecase) VerifyToken(ctx context.Context, idToken string) (*entity.U
 
 	user, err := u.userRepository.GetByUID(uid)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, &entity.UnauthorizedError{Massage: "not signup"}
-		}
-
 		log.Println("Error: ", err)
 		return nil, &entity.UnexpectedError{Err: err}
+	}
+
+	if user == nil {
+		return nil, &entity.UnauthorizedError{Massage: "not signup"}
 	}
 
 	return user, nil
 }
 
-func (u userUsecase) GetUser(ctx context.Context, uid string) (*entity.User, error) {
+func (u userUsecase) GetUser(_ context.Context, uid string) (*entity.User, error) {
 	user, err := u.userRepository.GetByUID(uid)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, &entity.NotFoundError{Name: "user"}
-		}
-
 		log.Println("Error: ", err)
 		return nil, &entity.UnexpectedError{Err: err}
+	}
+
+	if user == nil {
+		return nil, &entity.NotFoundError{Name: "user"}
 	}
 
 	return user, nil

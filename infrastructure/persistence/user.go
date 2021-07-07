@@ -1,6 +1,8 @@
 package persistence
 
 import (
+	"errors"
+
 	"gorm.io/gorm"
 
 	"go-firebase-auth-server/domain/entity"
@@ -22,6 +24,9 @@ func (r UserRepository) Crete(user *entity.User) error {
 func (r UserRepository) GetByUID(uid string) (*entity.User, error) {
 	var user entity.User
 	if err := r.db.Where("uid = ?", uid).Take(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &user, nil
