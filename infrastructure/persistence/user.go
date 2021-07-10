@@ -21,7 +21,7 @@ func (r UserRepository) Crete(user *entity.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r UserRepository) GetByUID(uid string) (*entity.User, error) {
+func (r UserRepository) GetByUID(uid entity.UID) (*entity.User, error) {
 	var user entity.User
 	if err := r.db.Where("uid = ?", uid).Take(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

@@ -31,17 +31,17 @@ func NewAuthenticationService() service.AuthenticationService {
 	}
 }
 
-func (s AuthenticationService) VerifyToken(ctx context.Context, idToken string) (string, error) {
-	token, err := s.client.VerifyIDToken(ctx, idToken)
+func (s AuthenticationService) VerifyToken(ctx context.Context, idToken entity.IDToken) (entity.UID, error) {
+	token, err := s.client.VerifyIDToken(ctx, string(idToken))
 	if err != nil {
 		return "", err
 	}
 
-	return token.UID, nil
+	return entity.UID(token.UID), nil
 }
 
-func (s AuthenticationService) SetClaims(ctx context.Context, uid string, claims map[string]interface{}) error {
-	err := s.client.SetCustomUserClaims(ctx, uid, claims)
+func (s AuthenticationService) SetClaims(ctx context.Context, uid entity.UID, claims map[string]interface{}) error {
+	err := s.client.SetCustomUserClaims(ctx, string(uid), claims)
 	if err != nil {
 		return err
 	}
@@ -50,10 +50,9 @@ func (s AuthenticationService) SetClaims(ctx context.Context, uid string, claims
 	return nil
 }
 
-func (s AuthenticationService) GetFirebaseUser(ctx context.Context, uid string) (*entity.User, error) {
-	userRecord, err := s.client.GetUser(ctx, uid)
+func (s AuthenticationService) GetFirebaseUser(ctx context.Context, uid entity.UID) (*entity.User, error) {
+	userRecord, err := s.client.GetUser(ctx, string(uid))
 	if err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
 	return &entity.User{

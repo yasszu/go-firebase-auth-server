@@ -3,23 +3,19 @@ package handler
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
-	"gorm.io/gorm"
-
 	"go-firebase-auth-server/application/usecase"
 	"go-firebase-auth-server/domain/entity"
 	"go-firebase-auth-server/interfaces/response"
-	"go-firebase-auth-server/interfaces/view"
+
+	"github.com/gorilla/mux"
 )
 
 type UserHandler struct {
-	db          *gorm.DB
 	userUsecase usecase.UserUsecase
 }
 
-func NewUserHandler(db *gorm.DB, userUsecase usecase.UserUsecase) *UserHandler {
+func NewUserHandler(userUsecase usecase.UserUsecase) *UserHandler {
 	return &UserHandler{
-		db:          db,
 		userUsecase: userUsecase,
 	}
 }
@@ -35,5 +31,5 @@ func (h *UserHandler) Me(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.JSON(w, http.StatusOK, view.NewUser(user))
+	response.JSON(w, http.StatusOK, user.Response())
 }

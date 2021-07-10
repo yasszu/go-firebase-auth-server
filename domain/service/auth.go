@@ -7,7 +7,7 @@ import (
 )
 
 type AuthenticationService interface {
-	VerifyToken(ctx context.Context, token string) (string, error)
-	SetClaims(ctx context.Context, uid string, claims map[string]interface{}) error
-	GetFirebaseUser(ctx context.Context, uid string) (*entity.User, error)
+	VerifyToken(ctx context.Context, idToken entity.IDToken) (entity.UID, error)
+	SetClaims(ctx context.Context, uid entity.UID, claims map[string]interface{}) error
+	GetFirebaseUser(ctx context.Context, uid entity.UID) (*entity.User, error)
 }

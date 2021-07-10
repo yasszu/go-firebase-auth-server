@@ -39,8 +39,8 @@ func main() {
 	userUsecase := usecase.NewUserUsecase(userRepository, authenticationService)
 	middleware := _middleware.NewMiddleware(userUsecase)
 	indexHandler := handler.NewIndexHandler(conn)
-	authHandler := handler.NewAuthHandler(conn, userUsecase)
-	userHandler := handler.NewUserHandler(conn, userUsecase)
+	authHandler := handler.NewAuthHandler(userUsecase)
+	userHandler := handler.NewUserHandler(userUsecase)
 
 	r.Use(middleware.Logging)
 	r.Use(middleware.CORS)

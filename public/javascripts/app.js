@@ -3,6 +3,7 @@ firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         console.log('User is signed in.')
         user.getIdToken(/* forceRefresh */ true).then(function (idToken) {
+            console.log(`idToken: ${idToken}`);
             axios.get('/v1/me', {
                 headers: {
                     Authorization: `Bearer ${idToken}`,

@@ -10,9 +10,9 @@ import (
 )
 
 type UserUsecase interface {
-	Authenticate(ctx context.Context, idToken string) (*entity.User, error)
-	VerifyToken(ctx context.Context, idToken string) (*entity.User, error)
-	GetUser(ctx context.Context, uid string) (*entity.User, error)
+	Authenticate(ctx context.Context, idToken entity.IDToken) (*entity.User, error)
+	VerifyToken(ctx context.Context, idToken entity.IDToken) (*entity.User, error)
+	GetUser(ctx context.Context, uid entity.UID) (*entity.User, error)
 }
 
 type userUsecase struct {
@@ -30,7 +30,7 @@ func NewUserUsecase(
 	}
 }
 
-func (u userUsecase) Authenticate(ctx context.Context, idToken string) (*entity.User, error) {
+func (u userUsecase) Authenticate(ctx context.Context, idToken entity.IDToken) (*entity.User, error) {
 	uid, err := u.authenticationService.VerifyToken(ctx, idToken)
 	if err != nil {
 		log.Println("Error: ", err)
@@ -59,7 +59,7 @@ func (u userUsecase) Authenticate(ctx context.Context, idToken string) (*entity.
 	return user, nil
 }
 
-func (u userUsecase) VerifyToken(ctx context.Context, idToken string) (*entity.User, error) {
+func (u userUsecase) VerifyToken(ctx context.Context, idToken entity.IDToken) (*entity.User, error) {
 	uid, err := u.authenticationService.VerifyToken(ctx, idToken)
 	if err != nil {
 		log.Println("Error: ", err)
@@ -79,7 +79,7 @@ func (u userUsecase) VerifyToken(ctx context.Context, idToken string) (*entity.U
 	return user, nil
 }
 
-func (u userUsecase) GetUser(_ context.Context, uid string) (*entity.User, error) {
+func (u userUsecase) GetUser(_ context.Context, uid entity.UID) (*entity.User, error) {
 	user, err := u.userRepository.GetByUID(uid)
 	if err != nil {
 		log.Println("Error: ", err)

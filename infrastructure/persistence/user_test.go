@@ -15,7 +15,7 @@ func TestUserRepository_Crete(t *testing.T) {
 		user *entity.User
 		want bool
 	}{
-		"success": {
+		"it should create new user": {
 			user: &entity.User{
 				UID:      "abcdefg",
 				Username: "name",
@@ -23,7 +23,7 @@ func TestUserRepository_Crete(t *testing.T) {
 			},
 			want: true,
 		},
-		"duplicate uid": {
+		"it should not create new user when uid is duplicate": {
 			user: &entity.User{
 				UID:      "uid1",
 				Username: "name",
@@ -61,7 +61,7 @@ func TestUserRepository_GetByUID(t *testing.T) {
 	})
 
 	tests := map[string]struct {
-		uid  string
+		uid  entity.UID
 		want *entity.User
 	}{
 		"success": {

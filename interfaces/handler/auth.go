@@ -3,23 +3,20 @@ package handler
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
-	"gorm.io/gorm"
+	"go-firebase-auth-server/domain/entity"
 
 	"go-firebase-auth-server/application/usecase"
-	"go-firebase-auth-server/interfaces/form"
 	"go-firebase-auth-server/interfaces/response"
-	"go-firebase-auth-server/interfaces/view"
+
+	"github.com/gorilla/mux"
 )
 
 type AuthHandler struct {
-	db          *gorm.DB
 	userUsecase usecase.UserUsecase
 }
 
-func NewAuthHandler(db *gorm.DB, userUsecase usecase.UserUsecase) *AuthHandler {
+func NewAuthHandler(userUsecase usecase.UserUsecase) *AuthHandler {
 	return &AuthHandler{
-		db:          db,
 		userUsecase: userUsecase,
 	}
 }
@@ -29,7 +26,7 @@ func (h *AuthHandler) Register(r *mux.Router) {
 }
 
 func (h *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
-	f := &form.Authenticate{
+	f := &entity.IDTokenForm{
 		IDToken: r.FormValue("id_token"),
 	}
 
@@ -38,11 +35,11 @@ func (h *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.userUsecase.Authenticate(r.Context(), f.IDToken)
+	user, err := h.userUsecase.Authenticate(r.Context(), f.Entity())
 	if err != nil {
 		response.Error(w, response.Status(err), err.Error())
 		return
 	}
 
-	response.JSON(w, http.StatusOK, view.NewUser(user))
+	response.JSON(w, http.StatusOK, user.Response())
 }
