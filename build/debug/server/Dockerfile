@@ -7,7 +7,8 @@ RUN apt-get update && \
 
 RUN go get -u github.com/cosmtrek/air && \
     go get -v github.com/rubenv/sql-migrate/... && \
-    go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.41.1
+    go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.41.1 && \
+    go get github.com/golang/mock/mockgen
 
 EXPOSE 8888
 
