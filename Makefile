@@ -25,9 +25,13 @@ migrate-up-test:
 	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate up -env="test"'
 	docker exec -it $(SERVER) /bin/bash -c 'sql-migrate status -env="test"'
 
+.PHONY: build
+build:
+	docker compose build
+
 .PHONY: run
 run:
-	docker-compose up
+	docker compose up
 
 .PHONY: test
 test:

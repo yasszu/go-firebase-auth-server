@@ -1,9 +1,6 @@
 package db
 
 import (
-	"fmt"
-	"time"
-
 	"go-firebase-auth-server/util/conf"
 
 	"gorm.io/driver/postgres"
@@ -11,23 +8,8 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-const (
-	retryTimes  = 20
-	waitingTime = 3 * time.Second
-)
-
 func NewConn() (*gorm.DB, error) {
-	db, err := openConn()
-	for i := 0; i < retryTimes; i++ {
-		if err == nil {
-			break
-		}
-		fmt.Println("Waiting for getting the connection of postgres...")
-		time.Sleep(waitingTime)
-		db, err = openConn()
-	}
-
-	return db, err
+	return openConn()
 }
 
 func openConn() (*gorm.DB, error) {
