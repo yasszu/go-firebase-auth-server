@@ -37,6 +37,10 @@ run:
 lint:
 	docker compose exec server golangci-lint run
 
+.PHONY: generate
+generate:
+	docker compose exec server go generate ./...
+
 .PHONY: test
 test:
 	docker compose exec server go test ./... -count=1
