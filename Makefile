@@ -33,6 +33,10 @@ build:
 run:
 	docker compose up
 
+.PHONY: lint
+lint:
+	docker compose exec server golangci-lint run
+
 .PHONY: test
 test:
 	docker compose exec server go test ./... -count=1
