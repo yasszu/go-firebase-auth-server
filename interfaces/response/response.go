@@ -9,6 +9,26 @@ import (
 	"go-firebase-auth-server/domain/entity"
 )
 
+var (
+	UnexpectedError   *entity.UnexpectedError
+	NotFoundError     *entity.NotFoundError
+	UnauthorizedError *entity.UnauthorizedError
+)
+
+func Status(err error) int {
+	if errors.As(err, &UnexpectedError) {
+		return http.StatusInternalServerError
+	}
+	if errors.As(err, &NotFoundError) {
+		return http.StatusNotFound
+	}
+	if errors.As(err, &UnauthorizedError) {
+		return http.StatusUnauthorized
+	}
+
+	return http.StatusInternalServerError
+}
+
 func JSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 	w.Header().Set("Content-Type", "application/json")
@@ -26,18 +46,4 @@ func OK(w http.ResponseWriter) {
 	JSON(w, http.StatusOK, map[string]string{
 		"message": "OK",
 	})
-}
-
-func Status(err error) int {
-	if errors.Is(err, &entity.UnexpectedError{}) {
-		return http.StatusInternalServerError
-	}
-	if errors.Is(err, &entity.NotFoundError{}) {
-		return http.StatusNotFound
-	}
-	if errors.Is(err, &entity.UnauthorizedError{}) {
-		return http.StatusUnauthorized
-	}
-
-	return http.StatusInternalServerError
 }

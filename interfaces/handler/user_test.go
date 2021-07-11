@@ -30,30 +30,43 @@ func TestUserHandler_Me(t *testing.T) {
 		name    string
 		token   string
 		prepare func(ctx context.Context, ctrl *gomock.Controller) usecase.UserUsecase
-		want    entity.UserResponse
+		want    *entity.UserResponse
 		code    int
 	}{
 		{
-			name:  "success",
+			name:  "it should returns user",
 			token: token,
 			prepare: func(ctx context.Context, ctrl *gomock.Controller) usecase.UserUsecase {
 				u := mock.NewMockUserUsecase(ctrl)
-				u.EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(&entity.User{
-					ID:        1,
-					UID:       "DCHfBC88grC3vwmdqsQwVvWJQBPR96kA",
-					Username:  "Chuck",
-					Email:     "chuck@example.com",
-					CreatedAt: time.Time{},
-					UpdatedAt: time.Time{},
-				}, nil)
+				u.EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(
+					&entity.User{
+						ID:        1,
+						UID:       "DCHfBC88grC3vwmdqsQwVvWJQBPR96kA",
+						Username:  "Chuck",
+						Email:     "chuck@example.com",
+						CreatedAt: time.Time{},
+						UpdatedAt: time.Time{},
+					}, nil)
 				return u
 			},
-			want: entity.UserResponse{
+			want: &entity.UserResponse{
 				UserID:   1,
 				Username: "Chuck",
 				Email:    "chuck@example.com",
 			},
 			code: http.StatusOK,
+		},
+		{
+			name:  "it should returns unauthorized error",
+			token: token,
+			prepare: func(ctx context.Context, ctrl *gomock.Controller) usecase.UserUsecase {
+				u := mock.NewMockUserUsecase(ctrl)
+				err := &entity.UnauthorizedError{Massage: "Unauthorized"}
+				u.EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(nil, err)
+				return u
+			},
+			want: &entity.UserResponse{},
+			code: http.StatusUnauthorized,
 		},
 	}
 	for _, tt := range tests {
@@ -64,30 +77,26 @@ func TestUserHandler_Me(t *testing.T) {
 			ctrl, ctx := gomock.WithContext(ctx, t)
 			defer ctrl.Finish()
 
-			r := mux.NewRouter()
-			v1 := r.PathPrefix("/v1").Subrouter()
-
 			u := tt.prepare(ctx, ctrl)
 			h := handler.NewUserHandler(u)
 			m := _middleware.NewMiddleware(u)
 
+			r := mux.NewRouter()
+			v1 := r.PathPrefix("/v1").Subrouter()
 			v1.Use(m.FirebaseAuth)
 			h.Register(v1)
 
 			req, err := http.NewRequest(http.MethodGet, "/v1/me", nil)
-			if err != nil {
-				assert.NoError(t, err)
-			}
+			assert.NoError(t, err)
 			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", tt.token))
 
 			rr := httptest.NewRecorder()
 			v1.ServeHTTP(rr, req)
 			res := rr.Result()
 
-			var user entity.UserResponse
+			var user *entity.UserResponse
 			err = json.Unmarshal(rr.Body.Bytes(), &user)
 			assert.NoError(t, err)
-
 			assert.Equal(t, tt.code, res.StatusCode)
 			assert.Empty(t, cmp.Diff(tt.want, user))
 		})
