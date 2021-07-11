@@ -30,7 +30,7 @@ curl --location --request POST 'localhost:8888/authenticate' \
 --form 'id_token={your_id_token}'
 ```
 
-### POST /v1/me
+### GET /v1/me
 ```sh
 curl --location --request GET 'localhost:8888/v1/me' \
 --header 'Authorization: Bearer {your_id_token}'

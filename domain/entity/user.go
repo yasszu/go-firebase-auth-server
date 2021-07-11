@@ -11,14 +11,14 @@ type User struct {
 	UpdatedAt time.Time
 }
 
-type userResponse struct {
+type UserResponse struct {
 	UserID   uint   `json:"user_id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
 }
 
-func (e *User) Response() *userResponse {
-	return &userResponse{
+func (e *User) Response() *UserResponse {
+	return &UserResponse{
 		UserID:   e.ID,
 		Username: e.Username,
 		Email:    e.Email,

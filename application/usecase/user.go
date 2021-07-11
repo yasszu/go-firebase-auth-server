@@ -9,10 +9,10 @@ import (
 	"go-firebase-auth-server/domain/service"
 )
 
+//go:generate mockgen -source=./user.go -destination=./mock/user.go -package=mock
 type UserUsecase interface {
 	Authenticate(ctx context.Context, idToken entity.IDToken) (*entity.User, error)
 	VerifyToken(ctx context.Context, idToken entity.IDToken) (*entity.User, error)
-	GetUser(ctx context.Context, uid entity.UID) (*entity.User, error)
 }
 
 type userUsecase struct {
@@ -74,20 +74,6 @@ func (u userUsecase) VerifyToken(ctx context.Context, idToken entity.IDToken) (*
 
 	if user == nil {
 		return nil, &entity.UnauthorizedError{Massage: "not signup"}
-	}
-
-	return user, nil
-}
-
-func (u userUsecase) GetUser(_ context.Context, uid entity.UID) (*entity.User, error) {
-	user, err := u.userRepository.GetByUID(uid)
-	if err != nil {
-		log.Println("Error: ", err)
-		return nil, &entity.UnexpectedError{Err: err}
-	}
-
-	if user == nil {
-		return nil, &entity.NotFoundError{Name: "user"}
 	}
 
 	return user, nil

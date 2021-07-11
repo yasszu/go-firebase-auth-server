@@ -27,7 +27,7 @@ func (h *UserHandler) Register(r *mux.Router) {
 func (h *UserHandler) Me(w http.ResponseWriter, r *http.Request) {
 	user, err := entity.GetCurrentUser(r.Context())
 	if err != nil {
-		response.Error(w, response.Status(err), err.Error())
+		response.Error(w, response.Status(err), err)
 		return
 	}
 
