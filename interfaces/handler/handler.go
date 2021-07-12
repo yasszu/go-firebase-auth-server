@@ -6,35 +6,38 @@ import (
 	"github.com/gorilla/mux"
 
 	"go-firebase-auth-server/application/usecase"
-	_middleware "go-firebase-auth-server/interfaces/middleware"
+	"go-firebase-auth-server/interfaces/middleware"
 )
 
 type Handler struct {
-	middleware *_middleware.Middleware
-	index      *IndexHandler
-	auth       *AuthHandler
-	user       *UserHandler
+	indexUsecase usecase.IndexUsecase
+	userUsecase  usecase.UserUsecase
 }
 
-func NewHandler(indexUsecase usecase.IndexUsecase, userUsecase usecase.UserUsecase) *Handler {
+func NewHandler(
+	indexUsecase usecase.IndexUsecase,
+	userUsecase usecase.UserUsecase,
+) *Handler {
 	return &Handler{
-		middleware: _middleware.NewMiddleware(userUsecase),
-		index:      NewIndexHandler(indexUsecase),
-		auth:       NewAuthHandler(userUsecase),
-		user:       NewUserHandler(userUsecase),
+		indexUsecase: indexUsecase,
+		userUsecase:  userUsecase,
 	}
 }
 
 func (h *Handler) Register(r *mux.Router) {
-	rr := r.PathPrefix("").Subrouter()
-	rr.Use(h.middleware.Logging)
-	rr.Use(h.middleware.CORS)
-	rr.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
-	h.index.Register(rr)
-	h.auth.Register(rr)
+	index := NewIndexHandler(h.indexUsecase)
+	auth := NewAuthHandler(h.userUsecase)
+	user := NewUserHandler(h.userUsecase)
+
+	root := r.PathPrefix("").Subrouter()
+	root.Use(middleware.Logging)
+	root.Use(middleware.CORS)
+	root.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
+	index.Register(root)
+	auth.Register(root)
 
 	v1 := r.PathPrefix("/v1").Subrouter()
-	v1.Use(h.middleware.Logging)
-	v1.Use(h.middleware.FirebaseAuth)
-	h.user.Register(v1)
+	v1.Use(middleware.Logging)
+	v1.Use(middleware.FirebaseAuth(h.userUsecase))
+	user.Register(v1)
 }
