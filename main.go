@@ -17,7 +17,6 @@ import (
 	"go-firebase-auth-server/infrastructure/firebase"
 	"go-firebase-auth-server/infrastructure/persistence"
 	"go-firebase-auth-server/interfaces/handler"
-	_middleware "go-firebase-auth-server/interfaces/middleware"
 	"go-firebase-auth-server/util/conf"
 )
 
@@ -32,25 +31,14 @@ func main() {
 		panic(err)
 	}
 
-	r := mux.NewRouter()
-
 	authenticationService := firebase.NewAuthenticationService()
 	userRepository := persistence.NewUserRepository(conn)
 	userUsecase := usecase.NewUserUsecase(userRepository, authenticationService)
-	middleware := _middleware.NewMiddleware(userUsecase)
-	indexHandler := handler.NewIndexHandler(conn)
-	authHandler := handler.NewAuthHandler(userUsecase)
-	userHandler := handler.NewUserHandler(userUsecase)
+	indexUsecase := usecase.NewIndexUsecase(conn)
 
-	r.Use(middleware.Logging)
-	r.Use(middleware.CORS)
-	root := r.PathPrefix("").Subrouter()
-	v1 := r.PathPrefix("/v1").Subrouter()
-	v1.Use(middleware.FirebaseAuth)
-
-	indexHandler.Register(root)
-	authHandler.Register(root)
-	userHandler.Register(v1)
+	r := mux.NewRouter()
+	h := handler.NewHandler(indexUsecase, userUsecase)
+	h.Register(r)
 
 	srv := &http.Server{
 		Addr:         conf.Server.Addr(),

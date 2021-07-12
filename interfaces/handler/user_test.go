@@ -18,7 +18,7 @@ import (
 	"go-firebase-auth-server/application/usecase/mock"
 	"go-firebase-auth-server/domain/entity"
 	"go-firebase-auth-server/interfaces/handler"
-	_middleware "go-firebase-auth-server/interfaces/middleware"
+	"go-firebase-auth-server/interfaces/middleware"
 )
 
 const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNodWNrIiwiaWF0IjoxNTE2MjM5MDIyfQ.Gsc5-cGTqp0XXIlHzJTixnubgnna4zdi1aq_wIzTWpQ"
@@ -79,19 +79,16 @@ func TestUserHandler_Me(t *testing.T) {
 
 			u := tt.prepare(ctx, ctrl)
 			h := handler.NewUserHandler(u)
-			m := _middleware.NewMiddleware(u)
-
 			r := mux.NewRouter()
-			v1 := r.PathPrefix("/v1").Subrouter()
-			v1.Use(m.FirebaseAuth)
-			h.Register(v1)
+			r.Use(middleware.FirebaseAuth(u))
+			h.Register(r)
 
-			req, err := http.NewRequest(http.MethodGet, "/v1/me", nil)
+			req, err := http.NewRequest(http.MethodGet, "/me", nil)
 			assert.NoError(t, err)
 			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", tt.token))
 
 			rr := httptest.NewRecorder()
-			v1.ServeHTTP(rr, req)
+			r.ServeHTTP(rr, req)
 			res := rr.Result()
 
 			var user *entity.UserResponse
