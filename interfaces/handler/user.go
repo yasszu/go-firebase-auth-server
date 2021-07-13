@@ -6,8 +6,6 @@ import (
 	"go-firebase-auth-server/application/usecase"
 	"go-firebase-auth-server/domain/entity"
 	"go-firebase-auth-server/interfaces/response"
-
-	"github.com/gorilla/mux"
 )
 
 type UserHandler struct {
@@ -18,10 +16,6 @@ func NewUserHandler(userUsecase usecase.UserUsecase) *UserHandler {
 	return &UserHandler{
 		userUsecase: userUsecase,
 	}
-}
-
-func (h *UserHandler) Register(r *mux.Router) {
-	r.HandleFunc("/me", h.Me).Methods("GET")
 }
 
 func (h *UserHandler) Me(w http.ResponseWriter, r *http.Request) {

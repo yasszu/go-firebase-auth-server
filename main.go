@@ -10,6 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	"go-firebase-auth-server/registry"
+
 	"github.com/gorilla/mux"
 
 	"go-firebase-auth-server/application/usecase"
@@ -25,7 +27,6 @@ func main() {
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*30, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
 
-	// Establish DB connection
 	conn, err := db.NewConn()
 	if err != nil {
 		panic(err)
@@ -35,9 +36,10 @@ func main() {
 	userRepository := persistence.NewUserRepository(conn)
 	userUsecase := usecase.NewUserUsecase(userRepository, authenticationService)
 	indexUsecase := usecase.NewIndexUsecase(conn)
+	ru := registry.NewUsecase(indexUsecase, userUsecase)
 
 	r := mux.NewRouter()
-	h := handler.NewHandler(indexUsecase, userUsecase)
+	h := handler.NewHandler(ru)
 	h.Register(r)
 
 	srv := &http.Server{

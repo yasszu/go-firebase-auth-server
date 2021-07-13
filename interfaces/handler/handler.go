@@ -3,6 +3,8 @@ package handler
 import (
 	"net/http"
 
+	"go-firebase-auth-server/registry"
+
 	"github.com/gorilla/mux"
 
 	"go-firebase-auth-server/application/usecase"
@@ -10,34 +12,33 @@ import (
 )
 
 type Handler struct {
-	indexUsecase usecase.IndexUsecase
-	userUsecase  usecase.UserUsecase
+	IndexUsecase usecase.IndexUsecase
+	UserUsecase  usecase.UserUsecase
 }
 
-func NewHandler(
-	indexUsecase usecase.IndexUsecase,
-	userUsecase usecase.UserUsecase,
-) *Handler {
+func NewHandler(r *registry.Usecase) *Handler {
 	return &Handler{
-		indexUsecase: indexUsecase,
-		userUsecase:  userUsecase,
+		IndexUsecase: r.Index,
+		UserUsecase:  r.User,
 	}
 }
 
 func (h *Handler) Register(r *mux.Router) {
-	index := NewIndexHandler(h.indexUsecase)
-	auth := NewAuthHandler(h.userUsecase)
-	user := NewUserHandler(h.userUsecase)
+	index := NewIndexHandler(h.IndexUsecase)
+	auth := NewAuthHandler(h.UserUsecase)
+	user := NewUserHandler(h.UserUsecase)
 
 	root := r.PathPrefix("").Subrouter()
 	root.Use(middleware.Logging)
 	root.Use(middleware.CORS)
 	root.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
-	index.Register(root)
-	auth.Register(root)
+	root.HandleFunc("/", index.Index).Methods("GET")
+	root.HandleFunc("/healthy", index.Healthy).Methods("GET")
+	root.HandleFunc("/ready", index.Ready).Methods("GET")
+	root.HandleFunc("/authenticate", auth.Authenticate).Methods("POST")
 
 	v1 := r.PathPrefix("/v1").Subrouter()
 	v1.Use(middleware.Logging)
-	v1.Use(middleware.FirebaseAuth(h.userUsecase))
-	user.Register(v1)
+	v1.Use(middleware.FirebaseAuth(h.UserUsecase))
+	v1.HandleFunc("/me", user.Me).Methods("GET")
 }

@@ -3,8 +3,6 @@ package handler
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
-
 	"go-firebase-auth-server/application/usecase"
 	"go-firebase-auth-server/interfaces/response"
 )
@@ -15,13 +13,6 @@ type IndexHandler struct {
 
 func NewIndexHandler(indexUsecase usecase.IndexUsecase) *IndexHandler {
 	return &IndexHandler{indexUsecase: indexUsecase}
-}
-
-func (h IndexHandler) Register(r *mux.Router) {
-	r.HandleFunc("/", h.Index).Methods("GET")
-	r.HandleFunc("/healthy", h.Healthy).Methods("GET")
-	r.HandleFunc("/ready", h.Ready).Methods("GET")
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public"))))
 }
 
 // Index AccountHandler
