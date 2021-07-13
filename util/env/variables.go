@@ -35,7 +35,7 @@ func NewVariables() Variables {
 		},
 		PostgresTestDB: Env{
 			Key:   "POSTGRES_TEST_DB",
-			Value: "postgres",
+			Value: "postgres_test",
 		},
 		ServerHost: Env{
 			Key:   "SERVER_HOST",
