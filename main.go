@@ -14,10 +14,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"go-firebase-auth-server/application/usecase"
 	"go-firebase-auth-server/infrastructure/db"
-	"go-firebase-auth-server/infrastructure/firebase"
-	"go-firebase-auth-server/infrastructure/persistence"
 	"go-firebase-auth-server/interfaces/handler"
 	"go-firebase-auth-server/util/conf"
 )
@@ -32,12 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	authenticationService := firebase.NewAuthenticationService()
-	userRepository := persistence.NewUserRepository(conn)
-	userUsecase := usecase.NewUserUsecase(userRepository, authenticationService)
-	indexUsecase := usecase.NewIndexUsecase(conn)
-	ru := registry.NewUsecase(indexUsecase, userUsecase)
-
+	ru := registry.NewUsecase(conn)
 	r := mux.NewRouter()
 	h := handler.NewHandler(ru)
 	h.Register(r)

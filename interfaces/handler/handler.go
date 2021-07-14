@@ -16,10 +16,10 @@ type Handler struct {
 	UserUsecase  usecase.UserUsecase
 }
 
-func NewHandler(r *registry.Usecase) *Handler {
+func NewHandler(r registry.Usecase) *Handler {
 	return &Handler{
-		IndexUsecase: r.Index,
-		UserUsecase:  r.User,
+		IndexUsecase: r.NewIndex(),
+		UserUsecase:  r.NewUser(),
 	}
 }
 

@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	mock "go-firebase-auth-server/application/usecase/mock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 
-	"go-firebase-auth-server/interfaces/handler/mock"
 	"go-firebase-auth-server/registry"
 
 	"github.com/golang/mock/gomock"
@@ -38,7 +38,8 @@ func TestUserHandler_Me(t *testing.T) {
 			token: token,
 			prepare: func(ctx context.Context, ctrl *gomock.Controller) *handler.Handler {
 				r := registry.NewMockUsecase(ctrl)
-				r.User.EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(
+				h := handler.NewHandler(r)
+				h.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(
 					&entity.User{
 						ID:        1,
 						UID:       "DCHfBC88grC3vwmdqsQwVvWJQBPR96kA",
@@ -47,7 +48,6 @@ func TestUserHandler_Me(t *testing.T) {
 						CreatedAt: time.Time{},
 						UpdatedAt: time.Time{},
 					}, nil)
-				h := mock.NewHandler(r)
 				return h
 			},
 			want: &entity.UserResponse{
@@ -63,8 +63,8 @@ func TestUserHandler_Me(t *testing.T) {
 			prepare: func(ctx context.Context, ctrl *gomock.Controller) *handler.Handler {
 				r := registry.NewMockUsecase(ctrl)
 				err := &entity.UnauthorizedError{Massage: "Unauthorized"}
-				r.User.EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(nil, err)
-				h := mock.NewHandler(r)
+				h := handler.NewHandler(r)
+				h.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(nil, err)
 				return h
 			},
 			want: &entity.UserResponse{},

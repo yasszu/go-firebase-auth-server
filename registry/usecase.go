@@ -2,31 +2,35 @@ package registry
 
 import (
 	"go-firebase-auth-server/application/usecase"
-	"go-firebase-auth-server/application/usecase/mock"
-
-	"github.com/golang/mock/gomock"
+	"go-firebase-auth-server/domain/repository"
+	"go-firebase-auth-server/domain/service"
+	"go-firebase-auth-server/infrastructure/firebase"
+	"go-firebase-auth-server/infrastructure/persistence"
+	"gorm.io/gorm"
 )
 
-type Usecase struct {
-	Index usecase.IndexUsecase
-	User  usecase.UserUsecase
+type Usecase interface {
+	NewIndex() usecase.IndexUsecase
+	NewUser() usecase.UserUsecase
 }
 
-func NewUsecase(indexUsecase usecase.IndexUsecase, userUsecase usecase.UserUsecase) *Usecase {
-	return &Usecase{
-		Index: indexUsecase,
-		User:  userUsecase,
+func NewUsecase(db *gorm.DB) Usecase {
+	return &usecaseImpl{
+		authenticationService: firebase.NewAuthenticationService(),
+		userRepository:        persistence.NewUserRepository(db),
 	}
 }
 
-type MockUsecase struct {
-	Index *mock.MockIndexUsecase
-	User  *mock.MockUserUsecase
+type usecaseImpl struct {
+	db                    *gorm.DB
+	authenticationService service.AuthenticationService
+	userRepository        repository.UserRepository
 }
 
-func NewMockUsecase(ctrl *gomock.Controller) *MockUsecase {
-	return &MockUsecase{
-		Index: mock.NewMockIndexUsecase(ctrl),
-		User:  mock.NewMockUserUsecase(ctrl),
-	}
+func (u *usecaseImpl) NewIndex() usecase.IndexUsecase {
+	return usecase.NewIndexUsecase(u.db)
+}
+
+func (u *usecaseImpl) NewUser() usecase.UserUsecase {
+	return usecase.NewUserUsecase(u.userRepository, u.authenticationService)
 }
