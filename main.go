@@ -10,12 +10,11 @@ import (
 	"syscall"
 	"time"
 
-	"go-firebase-auth-server/registry"
-
 	"github.com/gorilla/mux"
 
 	"go-firebase-auth-server/infrastructure/db"
 	"go-firebase-auth-server/interfaces/handler"
+	"go-firebase-auth-server/registry"
 	"go-firebase-auth-server/util/conf"
 )
 
@@ -29,9 +28,9 @@ func main() {
 		panic(err)
 	}
 
-	ru := registry.NewUsecase(conn)
+	u := registry.NewUsecase(conn)
 	r := mux.NewRouter()
-	h := handler.NewHandler(ru)
+	h := handler.NewHandler(u)
 	h.Register(r)
 
 	srv := &http.Server{
