@@ -4,21 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	mock "go-firebase-auth-server/application/usecase/mock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
-
-	"go-firebase-auth-server/registry"
 
 	"github.com/golang/mock/gomock"
 	"github.com/google/go-cmp/cmp"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
+	"go-firebase-auth-server/application/usecase/mock"
 	"go-firebase-auth-server/domain/entity"
 	"go-firebase-auth-server/interfaces/handler"
+	"go-firebase-auth-server/registry"
 )
 
 const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNodWNrIiwiaWF0IjoxNTE2MjM5MDIyfQ.Gsc5-cGTqp0XXIlHzJTixnubgnna4zdi1aq_wIzTWpQ"
@@ -29,17 +28,16 @@ func TestUserHandler_Me(t *testing.T) {
 	tests := []struct {
 		name    string
 		token   string
-		prepare func(ctx context.Context, ctrl *gomock.Controller) *handler.Handler
+		prepare func(ctx context.Context, ctrl *gomock.Controller) registry.Usecase
 		want    *entity.UserResponse
 		code    int
 	}{
 		{
 			name:  "it should returns user",
 			token: token,
-			prepare: func(ctx context.Context, ctrl *gomock.Controller) *handler.Handler {
+			prepare: func(ctx context.Context, ctrl *gomock.Controller) registry.Usecase {
 				r := registry.NewMockUsecase(ctrl)
-				h := handler.NewHandler(r)
-				h.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(
+				r.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(
 					&entity.User{
 						ID:        1,
 						UID:       "DCHfBC88grC3vwmdqsQwVvWJQBPR96kA",
@@ -48,7 +46,7 @@ func TestUserHandler_Me(t *testing.T) {
 						CreatedAt: time.Time{},
 						UpdatedAt: time.Time{},
 					}, nil)
-				return h
+				return r
 			},
 			want: &entity.UserResponse{
 				UserID:   1,
@@ -60,12 +58,11 @@ func TestUserHandler_Me(t *testing.T) {
 		{
 			name:  "it should returns unauthorized error",
 			token: token,
-			prepare: func(ctx context.Context, ctrl *gomock.Controller) *handler.Handler {
-				r := registry.NewMockUsecase(ctrl)
+			prepare: func(ctx context.Context, ctrl *gomock.Controller) registry.Usecase {
 				err := &entity.UnauthorizedError{Massage: "Unauthorized"}
-				h := handler.NewHandler(r)
-				h.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(nil, err)
-				return h
+				r := registry.NewMockUsecase(ctrl)
+				r.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(nil, err)
+				return r
 			},
 			want: &entity.UserResponse{},
 			code: http.StatusUnauthorized,
@@ -79,7 +76,8 @@ func TestUserHandler_Me(t *testing.T) {
 			ctrl, ctx := gomock.WithContext(ctx, t)
 			defer ctrl.Finish()
 
-			h := tt.prepare(ctx, ctrl)
+			u := tt.prepare(ctx, ctrl)
+			h := handler.NewHandler(u)
 			r := mux.NewRouter()
 			h.Register(r)
 

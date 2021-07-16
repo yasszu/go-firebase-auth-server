@@ -2,22 +2,28 @@ package registry
 
 import (
 	"github.com/golang/mock/gomock"
-	"go-firebase-auth-server/application/usecase"
+
 	"go-firebase-auth-server/application/usecase/mock"
+
+	"go-firebase-auth-server/application/usecase"
 )
 
-func NewMockUsecase(ctrl *gomock.Controller) Usecase {
-	return &mockUsecase{ctrl: ctrl}
+func NewMockUsecase(ctrl *gomock.Controller) *MockUsecase {
+	return &MockUsecase{
+		IndexUsecase: mock.NewMockIndexUsecase(ctrl),
+		UserUsecase:  mock.NewMockUserUsecase(ctrl),
+	}
 }
 
-type mockUsecase struct {
-	ctrl *gomock.Controller
+type MockUsecase struct {
+	IndexUsecase usecase.IndexUsecase
+	UserUsecase  usecase.UserUsecase
 }
 
-func (m mockUsecase) NewIndex() usecase.IndexUsecase {
-	return mock.NewMockIndexUsecase(m.ctrl)
+func (m MockUsecase) NewIndex() usecase.IndexUsecase {
+	return m.IndexUsecase
 }
 
-func (m mockUsecase) NewUser() usecase.UserUsecase {
-	return mock.NewMockUserUsecase(m.ctrl)
+func (m MockUsecase) NewUser() usecase.UserUsecase {
+	return m.UserUsecase
 }

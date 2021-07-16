@@ -12,21 +12,21 @@ import (
 )
 
 type Handler struct {
-	IndexUsecase usecase.IndexUsecase
-	UserUsecase  usecase.UserUsecase
+	indexUsecase usecase.IndexUsecase
+	userUsecase  usecase.UserUsecase
 }
 
 func NewHandler(r registry.Usecase) *Handler {
 	return &Handler{
-		IndexUsecase: r.NewIndex(),
-		UserUsecase:  r.NewUser(),
+		indexUsecase: r.NewIndex(),
+		userUsecase:  r.NewUser(),
 	}
 }
 
 func (h *Handler) Register(r *mux.Router) {
-	index := NewIndexHandler(h.IndexUsecase)
-	auth := NewAuthHandler(h.UserUsecase)
-	user := NewUserHandler(h.UserUsecase)
+	index := NewIndexHandler(h.indexUsecase)
+	auth := NewAuthHandler(h.userUsecase)
+	user := NewUserHandler(h.userUsecase)
 
 	root := r.PathPrefix("").Subrouter()
 	root.Use(middleware.Logging)
@@ -39,6 +39,6 @@ func (h *Handler) Register(r *mux.Router) {
 
 	v1 := r.PathPrefix("/v1").Subrouter()
 	v1.Use(middleware.Logging)
-	v1.Use(middleware.FirebaseAuth(h.UserUsecase))
+	v1.Use(middleware.FirebaseAuth(h.userUsecase))
 	v1.HandleFunc("/me", user.Me).Methods("GET")
 }
