@@ -10,19 +10,19 @@ import (
 	"go-firebase-auth-server/interfaces/response"
 )
 
-type FirebaseAuthMiddleware struct {
+type FirebaseAuth struct {
 	userUsecase usecase.UserUsecase
 }
 
-func NewFirebaseAuthMiddleware(userUsecase usecase.UserUsecase) *FirebaseAuthMiddleware {
-	return &FirebaseAuthMiddleware{userUsecase: userUsecase}
+func NewFirebaseAuth(userUsecase usecase.UserUsecase) *FirebaseAuth {
+	return &FirebaseAuth{userUsecase: userUsecase}
 }
 
-func (m *FirebaseAuthMiddleware) FirebaseAuth() func(next http.Handler) http.Handler {
+func (m *FirebaseAuth) Authenticate() func(next http.Handler) http.Handler {
 	return m.handler
 }
 
-func (m *FirebaseAuthMiddleware) handler(next http.Handler) http.Handler {
+func (m *FirebaseAuth) handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		extractedToken := strings.Split(authHeader, "Bearer ")

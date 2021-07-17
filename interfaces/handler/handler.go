@@ -13,7 +13,7 @@ type Handler struct {
 	index                  *IndexHandler
 	auth                   *AuthHandler
 	user                   *UserHandler
-	firebaseAuthMiddleware *middleware.FirebaseAuthMiddleware
+	firebaseAuthMiddleware *middleware.FirebaseAuth
 }
 
 func NewHandler(r registry.Usecase) *Handler {
@@ -21,7 +21,7 @@ func NewHandler(r registry.Usecase) *Handler {
 		index:                  NewIndexHandler(r.NewIndex()),
 		auth:                   NewAuthHandler(r.NewUser()),
 		user:                   NewUserHandler(r.NewUser()),
-		firebaseAuthMiddleware: middleware.NewFirebaseAuthMiddleware(r.NewUser()),
+		firebaseAuthMiddleware: middleware.NewFirebaseAuth(r.NewUser()),
 	}
 }
 
@@ -37,6 +37,6 @@ func (h *Handler) Register(r *mux.Router) {
 
 	v1 := r.PathPrefix("/v1").Subrouter()
 	v1.Use(middleware.Logging)
-	v1.Use(h.firebaseAuthMiddleware.FirebaseAuth())
+	v1.Use(h.firebaseAuthMiddleware.Authenticate())
 	v1.HandleFunc("/me", h.user.Me).Methods("GET")
 }
