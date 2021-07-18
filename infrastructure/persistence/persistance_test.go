@@ -17,7 +17,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	txdb.Register("txdb", "postgres", conf.Postgres.DSN())
+	txdb.Register("txdb", "postgres", conf.Postgres.TestDSN())
 	code := m.Run()
 	os.Exit(code)
 }
