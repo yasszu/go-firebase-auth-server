@@ -3,7 +3,7 @@
 ### Setup environment
 1. Create a `.env` file
    ```sh
-   cp build/local/server/.env.default build/local/server/.env
+   cp build/debug/server/.env.default build/debug/server/.env
    ```
 1. Download [service-account-file.json](https://firebase.google.com/docs/admin/setup)
 1. Edit the `.env` file
