@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
-	"go-firebase-auth-server/domain/entity"
-	"go-firebase-auth-server/domain/repository"
-	"go-firebase-auth-server/domain/service"
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/domain/repository"
+	"github.com/yasszu/go-firebase-auth-server/domain/service"
 )
 
 //go:generate mockgen -source=./user.go -destination=./mock/user.go -package=mock

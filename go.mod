@@ -1,4 +1,4 @@
-module go-firebase-auth-server
+module github.com/yasszu/go-firebase-auth-server
 
 go 1.16
 

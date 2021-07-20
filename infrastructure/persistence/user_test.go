@@ -3,11 +3,10 @@ package persistence_test
 import (
 	"testing"
 
-	"go-firebase-auth-server/domain/entity"
-	"go-firebase-auth-server/infrastructure/persistence"
-
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/infrastructure/persistence"
 )
 
 func TestUserRepository_Crete(t *testing.T) {

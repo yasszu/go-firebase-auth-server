@@ -3,10 +3,9 @@ package handler
 import (
 	"net/http"
 
-	"go-firebase-auth-server/domain/entity"
-
-	"go-firebase-auth-server/application/usecase"
-	"go-firebase-auth-server/interfaces/response"
+	"github.com/yasszu/go-firebase-auth-server/application/usecase"
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/interfaces/response"
 )
 
 type AuthHandler struct {

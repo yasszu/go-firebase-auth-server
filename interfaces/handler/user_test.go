@@ -13,11 +13,10 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
-
-	"go-firebase-auth-server/application/usecase/mock"
-	"go-firebase-auth-server/domain/entity"
-	"go-firebase-auth-server/interfaces/handler"
-	"go-firebase-auth-server/registry"
+	"github.com/yasszu/go-firebase-auth-server/application/usecase/mock"
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/interfaces/handler"
+	"github.com/yasszu/go-firebase-auth-server/registry"
 )
 
 const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNodWNrIiwiaWF0IjoxNTE2MjM5MDIyfQ.Gsc5-cGTqp0XXIlHzJTixnubgnna4zdi1aq_wIzTWpQ"

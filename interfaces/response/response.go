@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
 )
 
 var (

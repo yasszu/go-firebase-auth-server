@@ -6,9 +6,8 @@ import (
 
 	_firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
-
-	"go-firebase-auth-server/domain/entity"
-	"go-firebase-auth-server/domain/service"
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/domain/service"
 )
 
 type AuthenticationService struct {

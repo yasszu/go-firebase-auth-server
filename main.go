@@ -11,11 +11,10 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-
-	"go-firebase-auth-server/infrastructure/db"
-	"go-firebase-auth-server/interfaces/handler"
-	"go-firebase-auth-server/registry"
-	"go-firebase-auth-server/util/conf"
+	"github.com/yasszu/go-firebase-auth-server/infrastructure/db"
+	"github.com/yasszu/go-firebase-auth-server/interfaces/handler"
+	"github.com/yasszu/go-firebase-auth-server/registry"
+	"github.com/yasszu/go-firebase-auth-server/util/conf"
 )
 
 func main() {

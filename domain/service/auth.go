@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
 )
 
 type AuthenticationService interface {

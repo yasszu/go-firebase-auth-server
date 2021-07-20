@@ -8,9 +8,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"go-firebase-auth-server/domain/entity"
-	"go-firebase-auth-server/domain/repository"
-	"go-firebase-auth-server/domain/repository/mock"
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/domain/repository"
+	"github.com/yasszu/go-firebase-auth-server/domain/repository/mock"
 )
 
 func Test_userUsecase_GetUser(t *testing.T) {

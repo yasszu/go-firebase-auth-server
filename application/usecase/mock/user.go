@@ -6,8 +6,9 @@ package mock
 
 import (
 	context "context"
-	entity "go-firebase-auth-server/domain/entity"
 	reflect "reflect"
+
+	entity "github.com/yasszu/go-firebase-auth-server/domain/entity"
 
 	gomock "github.com/golang/mock/gomock"
 )

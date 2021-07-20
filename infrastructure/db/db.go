@@ -1,8 +1,7 @@
 package db
 
 import (
-	"go-firebase-auth-server/util/conf"
-
+	"github.com/yasszu/go-firebase-auth-server/util/conf"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

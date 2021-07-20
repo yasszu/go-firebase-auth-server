@@ -2,10 +2,8 @@ package registry
 
 import (
 	"github.com/golang/mock/gomock"
-
-	"go-firebase-auth-server/application/usecase/mock"
-
-	"go-firebase-auth-server/application/usecase"
+	"github.com/yasszu/go-firebase-auth-server/application/usecase"
+	"github.com/yasszu/go-firebase-auth-server/application/usecase/mock"
 )
 
 func NewMockUsecase(ctrl *gomock.Controller) *MockUsecase {

@@ -4,9 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-
-	"go-firebase-auth-server/interfaces/middleware"
-	"go-firebase-auth-server/registry"
+	"github.com/yasszu/go-firebase-auth-server/interfaces/middleware"
+	"github.com/yasszu/go-firebase-auth-server/registry"
 )
 
 type Handler struct {

@@ -3,7 +3,7 @@ package conf
 import (
 	"fmt"
 
-	"go-firebase-auth-server/util/env"
+	"github.com/yasszu/go-firebase-auth-server/util/env"
 )
 
 var (

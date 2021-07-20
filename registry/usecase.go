@@ -1,11 +1,11 @@
 package registry
 
 import (
-	"go-firebase-auth-server/application/usecase"
-	"go-firebase-auth-server/domain/repository"
-	"go-firebase-auth-server/domain/service"
-	"go-firebase-auth-server/infrastructure/firebase"
-	"go-firebase-auth-server/infrastructure/persistence"
+	"github.com/yasszu/go-firebase-auth-server/application/usecase"
+	"github.com/yasszu/go-firebase-auth-server/domain/repository"
+	"github.com/yasszu/go-firebase-auth-server/domain/service"
+	"github.com/yasszu/go-firebase-auth-server/infrastructure/firebase"
+	"github.com/yasszu/go-firebase-auth-server/infrastructure/persistence"
 	"gorm.io/gorm"
 )
 

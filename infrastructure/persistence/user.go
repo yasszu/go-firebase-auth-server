@@ -3,10 +3,9 @@ package persistence
 import (
 	"errors"
 
+	"github.com/yasszu/go-firebase-auth-server/domain/entity"
+	"github.com/yasszu/go-firebase-auth-server/domain/repository"
 	"gorm.io/gorm"
-
-	"go-firebase-auth-server/domain/entity"
-	"go-firebase-auth-server/domain/repository"
 )
 
 type UserRepository struct {
