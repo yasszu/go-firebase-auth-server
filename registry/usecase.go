@@ -16,6 +16,7 @@ type Usecase interface {
 
 func NewUsecase(db *gorm.DB) Usecase {
 	return &usecaseImpl{
+		db:                    db,
 		authenticationService: firebase.NewAuthenticationService(),
 		userRepository:        persistence.NewUserRepository(db),
 	}
