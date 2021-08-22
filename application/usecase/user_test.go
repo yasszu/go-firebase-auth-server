@@ -1,31 +1,36 @@
 package usecase_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-
+	"github.com/yasszu/go-firebase-auth-server/application/usecase"
 	"github.com/yasszu/go-firebase-auth-server/domain/entity"
-	"github.com/yasszu/go-firebase-auth-server/domain/repository"
 	"github.com/yasszu/go-firebase-auth-server/domain/repository/mock"
+	repository "github.com/yasszu/go-firebase-auth-server/domain/repository/mock"
+	service "github.com/yasszu/go-firebase-auth-server/domain/service/mock"
 )
 
-func Test_userUsecase_GetUser(t *testing.T) {
+func Test_userUsecase_VerifyToken(t *testing.T) {
 	t.Parallel()
 
 	tests := map[string]struct {
-		uid     entity.UID
-		prepare func(ctrl *gomock.Controller) repository.UserRepository
+		idToken entity.IDToken
+		prepare func(ctx context.Context, ctrl *gomock.Controller) usecase.UserUsecase
 		want    *entity.User
 		err     error
 	}{
 		"it should returns user": {
-			uid: entity.UID("uid123"),
-			prepare: func(ctrl *gomock.Controller) repository.UserRepository {
-				userRepository := mock.NewMockUserRepository(ctrl)
+			idToken: entity.IDToken("idToken123"),
+			prepare: func(ctx context.Context, ctrl *gomock.Controller) usecase.UserUsecase {
+				authenticationService := service.NewMockAuthenticationService(ctrl)
+				authenticationService.EXPECT().VerifyToken(ctx, entity.IDToken("idToken123")).Return(entity.UID("uid123"), nil)
+
+				userRepository := repository.NewMockUserRepository(ctrl)
 				userRepository.EXPECT().GetByUID(entity.UID("uid123")).Return(&entity.User{
 					ID:        1,
 					UID:       "uid123",
@@ -34,7 +39,8 @@ func Test_userUsecase_GetUser(t *testing.T) {
 					CreatedAt: time.Date(2021, 1, 2, 3, 4, 5, 6, time.UTC),
 					UpdatedAt: time.Date(2021, 1, 2, 3, 4, 5, 6, time.UTC),
 				}, nil)
-				return userRepository
+
+				return usecase.NewUserUsecase(userRepository, authenticationService)
 			},
 			want: &entity.User{
 				ID:        1,
@@ -47,24 +53,46 @@ func Test_userUsecase_GetUser(t *testing.T) {
 			err: nil,
 		},
 		"it should returns NotFountError when user is nil": {
-			uid: entity.UID("uid000"),
-			prepare: func(ctrl *gomock.Controller) repository.UserRepository {
+			idToken: entity.IDToken("idToken000"),
+			prepare: func(ctx context.Context, ctrl *gomock.Controller) usecase.UserUsecase {
+				authenticationService := service.NewMockAuthenticationService(ctrl)
+				authenticationService.EXPECT().VerifyToken(ctx, entity.IDToken("idToken000")).Return(entity.UID("uid000"), nil)
+
 				userRepository := mock.NewMockUserRepository(ctrl)
 				userRepository.EXPECT().GetByUID(entity.UID("uid000")).Return(nil, nil)
-				return userRepository
+
+				return usecase.NewUserUsecase(userRepository, authenticationService)
 			},
 			want: nil,
 			err:  &entity.NotFoundError{Name: "user"},
 		},
 		"it should returns UnexpectedError when err occurs on DB": {
-			uid: entity.UID("uid000"),
-			prepare: func(ctrl *gomock.Controller) repository.UserRepository {
+			idToken: entity.IDToken("idToken000"),
+			prepare: func(ctx context.Context, ctrl *gomock.Controller) usecase.UserUsecase {
+				authenticationService := service.NewMockAuthenticationService(ctrl)
+				authenticationService.EXPECT().VerifyToken(ctx, entity.IDToken("idToken000")).Return(entity.UID("uid000"), nil)
+
 				userRepository := mock.NewMockUserRepository(ctrl)
 				userRepository.EXPECT().GetByUID(entity.UID("uid000")).Return(nil, errors.New("test"))
-				return userRepository
+
+				return usecase.NewUserUsecase(userRepository, authenticationService)
 			},
 			want: nil,
 			err:  &entity.UnexpectedError{Err: errors.New("test")},
+		},
+		"it should returns UnauthorizedError when user is not sign in": {
+			idToken: entity.IDToken("idToken000"),
+			prepare: func(ctx context.Context, ctrl *gomock.Controller) usecase.UserUsecase {
+				authenticationService := service.NewMockAuthenticationService(ctrl)
+				authenticationService.EXPECT().VerifyToken(ctx, entity.IDToken("idToken000")).Return(entity.UID("uid000"), nil)
+
+				userRepository := mock.NewMockUserRepository(ctrl)
+				userRepository.EXPECT().GetByUID(entity.UID("uid000")).Return(nil, nil)
+
+				return usecase.NewUserUsecase(userRepository, authenticationService)
+			},
+			want: nil,
+			err:  &entity.UnauthorizedError{Massage: "not signup"},
 		},
 	}
 	for name, tt := range tests {
@@ -75,8 +103,9 @@ func Test_userUsecase_GetUser(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			r := tt.prepare(ctrl)
-			got, err := r.GetByUID(tt.uid)
+			ctx := context.Background()
+			u := tt.prepare(ctx, ctrl)
+			got, err := u.VerifyToken(ctx, tt.idToken)
 			if err != nil {
 				assert.Error(t, tt.err, err)
 			}

@@ -8,9 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	entity "github.com/yasszu/go-firebase-auth-server/domain/entity"
-
 	gomock "github.com/golang/mock/gomock"
+	entity "github.com/yasszu/go-firebase-auth-server/domain/entity"
 )
 
 // MockUserUsecase is a mock of UserUsecase interface.

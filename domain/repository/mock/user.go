@@ -7,9 +7,8 @@ package mock
 import (
 	reflect "reflect"
 
-	entity "github.com/yasszu/go-firebase-auth-server/domain/entity"
-
 	gomock "github.com/golang/mock/gomock"
+	entity "github.com/yasszu/go-firebase-auth-server/domain/entity"
 )
 
 // MockUserRepository is a mock of UserRepository interface.
