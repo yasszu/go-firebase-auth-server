@@ -27,6 +27,15 @@ func main() {
 		panic(err)
 	}
 
+	sqlDb, err := conn.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err = db.Migration(sqlDb); err != nil {
+		log.Fatal(err)
+	}
+
 	u := registry.NewUsecase(conn)
 	r := mux.NewRouter()
 	h := handler.NewHandler(u)
