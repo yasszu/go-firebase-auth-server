@@ -34,5 +34,5 @@ func (h *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.JSON(w, http.StatusOK, user.Response())
+	response.JSON(w, http.StatusOK, response.NewUser(user))
 }

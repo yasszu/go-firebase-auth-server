@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/yasszu/go-firebase-auth-server/domain/entity"
 	"github.com/yasszu/go-firebase-auth-server/infrastructure/persistence"
@@ -39,7 +41,7 @@ func TestUserRepository_Crete(t *testing.T) {
 			assert.NoError(t, err)
 			defer txDB.Close()
 
-			testDB.Create(&entity.User{ID: 1, UID: "uid1", Username: "Tom", Email: "tom@test.com"})
+			testDB.Create(&entity.User{UID: "uid1", Username: "Tom", Email: "tom@test.com"})
 
 			userRepository := persistence.NewUserRepository(testDB)
 			err = userRepository.Crete(tt.user)
@@ -51,12 +53,9 @@ func TestUserRepository_Crete(t *testing.T) {
 func TestUserRepository_GetByUID(t *testing.T) {
 	testDB := openTestDB()
 	testDB.Create(&entity.User{
-		ID:        1,
-		UID:       "uid1",
-		Username:  "Tom",
-		Email:     "tom@test.com",
-		CreatedAt: now(),
-		UpdatedAt: now(),
+		UID:      "uid1",
+		Username: "Tom",
+		Email:    "tom@test.com",
 	})
 
 	tests := map[string]struct {
@@ -66,12 +65,9 @@ func TestUserRepository_GetByUID(t *testing.T) {
 		"success": {
 			uid: "uid1",
 			want: &entity.User{
-				ID:        1,
-				UID:       "uid1",
-				Username:  "Tom",
-				Email:     "tom@test.com",
-				CreatedAt: now(),
-				UpdatedAt: now(),
+				UID:      "uid1",
+				Username: "Tom",
+				Email:    "tom@test.com",
 			},
 		},
 		"not found": {
@@ -91,7 +87,9 @@ func TestUserRepository_GetByUID(t *testing.T) {
 			userRepository := persistence.NewUserRepository(testDB)
 			got, err := userRepository.GetByUID(tt.uid)
 			assert.NoError(t, err)
-			assert.Empty(t, cmp.Diff(tt.want, got))
+			assert.Empty(t, cmp.Diff(tt.want, got,
+				cmpopts.IgnoreFields(entity.User{}, "ID", "CreatedAt", "UpdatedAt")),
+			)
 		})
 	}
 }
