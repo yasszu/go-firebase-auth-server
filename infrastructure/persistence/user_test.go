@@ -87,9 +87,7 @@ func TestUserRepository_GetByUID(t *testing.T) {
 			userRepository := persistence.NewUserRepository(testDB)
 			got, err := userRepository.GetByUID(tt.uid)
 			assert.NoError(t, err)
-			assert.Empty(t, cmp.Diff(tt.want, got,
-				cmpopts.IgnoreFields(entity.User{}, "ID", "CreatedAt", "UpdatedAt")),
-			)
+			assert.Empty(t, cmp.Diff(tt.want, got, cmpopts.IgnoreFields(entity.User{}, "ID")))
 		})
 	}
 }

@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/yasszu/go-firebase-auth-server/interfaces/response"
 
@@ -40,12 +39,10 @@ func TestUserHandler_Me(t *testing.T) {
 				r := registry.NewMockUsecase(ctrl)
 				r.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(
 					&entity.User{
-						ID:        1,
-						UID:       "DCHfBC88grC3vwmdqsQwVvWJQBPR96kA",
-						Username:  "Chuck",
-						Email:     "chuck@example.com",
-						CreatedAt: time.Time{},
-						UpdatedAt: time.Time{},
+						ID:       1,
+						UID:      "DCHfBC88grC3vwmdqsQwVvWJQBPR96kA",
+						Username: "Chuck",
+						Email:    "chuck@example.com",
 					}, nil)
 				return r
 			},
