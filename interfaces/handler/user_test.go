@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
+
+	"github.com/yasszu/go-firebase-auth-server/interfaces/response"
 
 	"github.com/golang/mock/gomock"
 	"github.com/google/go-cmp/cmp"
@@ -28,7 +29,7 @@ func TestUserHandler_Me(t *testing.T) {
 		name    string
 		token   string
 		prepare func(ctx context.Context, ctrl *gomock.Controller) registry.Usecase
-		want    *entity.UserResponse
+		want    *response.User
 		code    int
 	}{
 		{
@@ -38,16 +39,14 @@ func TestUserHandler_Me(t *testing.T) {
 				r := registry.NewMockUsecase(ctrl)
 				r.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(
 					&entity.User{
-						ID:        1,
-						UID:       "DCHfBC88grC3vwmdqsQwVvWJQBPR96kA",
-						Username:  "Chuck",
-						Email:     "chuck@example.com",
-						CreatedAt: time.Time{},
-						UpdatedAt: time.Time{},
+						ID:       1,
+						UID:      "DCHfBC88grC3vwmdqsQwVvWJQBPR96kA",
+						Username: "Chuck",
+						Email:    "chuck@example.com",
 					}, nil)
 				return r
 			},
-			want: &entity.UserResponse{
+			want: &response.User{
 				UserID:   1,
 				Username: "Chuck",
 				Email:    "chuck@example.com",
@@ -63,7 +62,7 @@ func TestUserHandler_Me(t *testing.T) {
 				r.UserUsecase.(*mock.MockUserUsecase).EXPECT().VerifyToken(gomock.Any(), entity.IDToken(token)).Return(nil, err)
 				return r
 			},
-			want: &entity.UserResponse{},
+			want: &response.User{},
 			code: http.StatusUnauthorized,
 		},
 	}
@@ -88,7 +87,7 @@ func TestUserHandler_Me(t *testing.T) {
 			r.ServeHTTP(rr, req)
 			res := rr.Result()
 
-			var user *entity.UserResponse
+			var user *response.User
 			err = json.Unmarshal(rr.Body.Bytes(), &user)
 			assert.NoError(t, err)
 			assert.Equal(t, tt.code, res.StatusCode)

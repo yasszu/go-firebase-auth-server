@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -32,23 +31,19 @@ func Test_userUsecase_VerifyToken(t *testing.T) {
 
 				userRepository := repository.NewMockUserRepository(ctrl)
 				userRepository.EXPECT().GetByUID(entity.UID("uid123")).Return(&entity.User{
-					ID:        1,
-					UID:       "uid123",
-					Username:  "Chuck",
-					Email:     "chuck@example.com",
-					CreatedAt: time.Date(2021, 1, 2, 3, 4, 5, 6, time.UTC),
-					UpdatedAt: time.Date(2021, 1, 2, 3, 4, 5, 6, time.UTC),
+					ID:       1,
+					UID:      "uid123",
+					Username: "Chuck",
+					Email:    "chuck@example.com",
 				}, nil)
 
 				return usecase.NewUserUsecase(userRepository, authenticationService)
 			},
 			want: &entity.User{
-				ID:        1,
-				UID:       "uid123",
-				Username:  "Chuck",
-				Email:     "chuck@example.com",
-				CreatedAt: time.Date(2021, 1, 2, 3, 4, 5, 6, time.UTC),
-				UpdatedAt: time.Date(2021, 1, 2, 3, 4, 5, 6, time.UTC),
+				ID:       1,
+				UID:      "uid123",
+				Username: "Chuck",
+				Email:    "chuck@example.com",
 			},
 			err: nil,
 		},

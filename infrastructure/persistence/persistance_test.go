@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	migrate "github.com/rubenv/sql-migrate"
+
 	"github.com/DATA-DOG/go-txdb"
 	_ "github.com/lib/pq"
 	"github.com/yasszu/go-firebase-auth-server/util/conf"
@@ -16,6 +18,21 @@ import (
 
 func TestMain(m *testing.M) {
 	txdb.Register("txdb", "postgres", conf.Postgres.TestDSN())
+
+	txDB, err := sql.Open("txdb", conf.Postgres.TestDSN())
+	if err != nil {
+		panic(err)
+	}
+
+	migrations := &migrate.FileMigrationSource{
+		Dir: "../../migrations",
+	}
+
+	_, err = migrate.Exec(txDB, "postgres", migrations, migrate.Up)
+	if err != nil {
+		panic(err)
+	}
+
 	code := m.Run()
 	os.Exit(code)
 }
